@@ -1,0 +1,1 @@
+De HTTP response verandert niet als we de If-Modified-Since veranderen.
