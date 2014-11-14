@@ -1,0 +1,1 @@
+The data stays the same, you are not greeted with another login window. Instead you just see the same page again.

@@ -1,0 +1,24 @@
+Last login: Fri Nov 14 13:48:45 on ttys000
+MacBook-Air-van-Lars:~ larsstegman$ telnet httpbin.org 80
+Trying 23.21.86.144...
+Connected to httpbin.org.
+Escape character is '^]'.
+HEAD /basic-auth/user/passwd HTTP/1.1
+Host:httpbin.org
+Authorization: Basic dXNlcjpwYXNzd2Q=
+
+HTTP/1.1 200 OK
+Connection: keep-alive
+Server: gunicorn/18.0
+Date: Fri, 14 Nov 2014 12:56:21 GMT
+Content-Type: application/json
+Content-Length: 46
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+Via: 1.1 vegur
+
+
+
+
+
+
