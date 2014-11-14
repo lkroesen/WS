@@ -1,0 +1,13 @@
+todoist: It takes 6 mouse clicks to add a to do with a deadline and reminder.
+	First click: New To Do field
+	Second click: Open the calendar
+	Third click: Select date in this month
+	Fourth click: I want to a reminder, but it's premium option
+	Fifth click: Dismiss premium notification
+	Sixth click: Add to do to list.
+
+The actions were very intuitive to perform.
+
+Any.do:	
+
+
