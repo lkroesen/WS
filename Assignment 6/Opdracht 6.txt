@@ -8,6 +8,13 @@ todoist: It takes 6 mouse clicks to add a to do with a deadline and reminder.
 
 The actions were very intuitive to perform.
 
-Any.do:	
+Any.do:	It takes 11 mouse click to add a to do with a deadline and reminder.
+	First click: Add a to do on some day
+	Second click: Open calender  
+	Third click: Select date
+	Fourth click: Confim date
+	Fifth click: add alarm
+	Sixth click: Add to do to list
+
 
 
