@@ -1,0 +1,11 @@
+Features that are required:
+	* Add to do
+	* Delete to do
+	* Schedule to do
+	* Multiple to do
+	* Add alarm for to do
+	* Complete to do
+	* Overview of recent to do's
+	* Share to do's
+	* Across device sync
+	* Notify by mail
