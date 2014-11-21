@@ -1,6 +1,7 @@
 <html>
  	<head>
 		<title>Your To Do's - PLANDO</title>
+		
 	</head>
 	
 	<body>
@@ -18,25 +19,30 @@
 			
 			<section id="todos">
 				<ul>
-					<li class="todo">
-						<input type="checkbox" disabled="true" />
-						<input type="text" placeholder="New to do">
-						<button>+</button>
+					<li id="newToDo" class="todo">
+						<form onsubmit="return false;">
+							<input type="checkbox" disabled="true" />
+							<input id="toDoMessage" type="text" placeholder="New to do" />
+							<button id="addButton">+</button>
+						</form>
 					</li>
+					
 					<li class="todo">
 						<input type="checkbox" />Your To Do <button>EDIT</button><br/>
-						<span>Due date DD-MM-YYYY</span> <button>X</button>
+						<span>Due date DD-MM-YYYY</span> <button class='delete'>||</button>
 					</li>
 
 					<li class="todo">
 						<input type="checkbox" />Your second To Do <button>EDIT</button><br/>
-						<span>Due date DD-MM-YYYY</span><button>X</button>
+						<span>Due date DD-MM-YYYY</span><button class='delete'>||</button>
 					</li>
 					
 				</ul>
 			</section>
 		</main>
-	
+		
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="javascripts/scripts.js"></script>
 	
 	</body>
 </html>
