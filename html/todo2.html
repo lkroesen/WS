@@ -4,31 +4,31 @@
 	</head>
 	
 	<body>
-		<nav>
+		<nav id="menu">
 			<span>To Do</span>
 			<span>Options</span>
 		</nav>
 	
 		<main>
-			<section>
+			<section id="sortButtons">
 				<button id="dateSort"><span style="font-family:Wingdings">&#191;</span></button>
 				<button id="urgencySort">!!!</button>
 				<button id="doneSort">✔</button>
 			</section>
 			
-			<section>
+			<section id="todos">
 				<ul>
-					<li>
+					<li class="todo">
 						<input type="checkbox" disabled="true" />
 						<input type="text" placeholder="New to do">
 						<button>+</button>
 					</li>
-					<li>
+					<li class="todo">
 						<input type="checkbox" />Your To Do <button>EDIT</button><br/>
 						<span>Due date DD-MM-YYYY</span> <button>X</button>
 					</li>
 
-					<li>
+					<li class="todo">
 						<input type="checkbox" />Your second To Do <button>EDIT</button><br/>
 						<span>Due date DD-MM-YYYY</span><button>X</button>
 					</li>
