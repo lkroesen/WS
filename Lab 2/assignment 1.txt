@@ -1,0 +1,29 @@
+- Add a todo item with a due date and an importance rating
+1. text field at the the top of the todo window
+2. Enter a todo text and press enter
+3. Adds the todo to the active list of todos
+4. 
+
+- Delete a todo item
+1. Button/Image (of a x)
+2. Click on the button/image
+3. opens a pop-up
+4. that asks the user if they're sure they want to delete this todo
+
+-Change an existing todo's content
+1. Button/Image (of a pencil)
+2. Click on the button/image
+3. opens a menu
+4. to change the content of the todo
+
+- Set a todo to done
+1. Checkmark
+2. Click on checkmark
+3. marks the todo as done
+4. function here
+
+- Sort on date
+1. Menu bar
+2. Click on “importance”
+3. Select the way to sort the todos
+4. function here.
