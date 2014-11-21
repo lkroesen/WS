@@ -54,11 +54,9 @@ $(document).ready(function() {
 			$(this).parent().remove();
 		}
 		
-		
-	});
-	
-	$('ul').on('blur', 'li button.delete', function() {
-		$(this).text("||");
-	});
-		
+		//Als de gebruiker ergens anders klikt verandert de knop weer terug.
+		$('ul').on('blur', 'li button.delete', function() {
+			$(this).text("||");
+		});
+	});		
 });
