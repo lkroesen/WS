@@ -10,7 +10,7 @@ var addToDo = function(message) {
 		$("#toDoMessage").val("");
 	}
 	
-}
+};
 
 $(document).ready(function() {
 	//This method checks if the enterkey is pressed to add a to do to the list.
@@ -58,5 +58,21 @@ $(document).ready(function() {
 		$('ul').on('blur', 'li button.delete', function() {
 			$(this).text("||");
 		});
-	});		
+	});
+	
+	$('ul').on('click', 'li input[type="checkbox"]', function() {
+		console.log("checkbox clicked");
+		if($(this).is(':checked')) {
+			console.log("check");
+			$(this).parent().css('text-decoration','line-through');
+			$(this).parent().css('color','grey');
+		} else {
+			$(this).parent().css('text-decoration','none');
+			$(this).parent().css('color','black');
+			console.log("uncheck");
+		}
+	});
+		
+		
+	
 });
