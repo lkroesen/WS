@@ -1,29 +1,29 @@
-
-
+'use strict';
 //This method adds a to do and takes one vairable that is the message.
+
 var addToDo = function(message) {
 	if(message !== "") {
-		var todo = "<li class='todo'><p contenteditable="true" ><input type='checkbox' />";
+		var todo = "<li class='todo'><input type='checkbox' /><p contenteditable="true" >";
 		todo += message;
-		todo += "<br /><button class='delete'>| |</button></li>";
+		todo += "</p><br /><button class='delete'>| |</button></li>";
 		$("#todos ul").append(todo);
 		$("#toDoMessage").val("");
 	}
 	
 };
 
-$(document).ready(function() {
+$(document).ready(function () {
 	//This method checks if the enterkey is pressed to add a to do to the list.
 	
-	$('#toDoMessage').on('keypress', function(e) {
+	$('#toDoMessage').on('keypress', function (key) {
 		//Check if enter was pressed. If so, continue.
-		if(e.which === 13) {
+		if (key.which === 13) {
 			
 			var foo = $("#toDoMessage").val();
 			
-			addToDo(foo);	
+			addToDo(foo);
 			
-			console.log("Enter pressed");	
+			console.log("Enter pressed");
 			return false;
 		}
 		
@@ -34,7 +34,7 @@ $(document).ready(function() {
 	//This method checks if the + button is pressed to add a to do to the list.
 	$('#addButton').on('click', function() {
 		
-		var foo = $("#toDoMessage").val();	
+		var foo = $("#toDoMessage").val();
 		addToDo(foo);
 		console.log("Pressed the + button");
 		
