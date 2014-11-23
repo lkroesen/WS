@@ -3,9 +3,9 @@
 
 var addToDo = function(message) {
 	if(message !== "") {
-		var todo = "<li class='todo'><input type='checkbox' /><p contenteditable="true" >";
+		var todo = "<li class='todo'><input type='checkbox' /><span contenteditable='true' >";
 		todo += message;
-		todo += "</p><br /><button class='delete'>| |</button></li>";
+		todo += "</span><br /><button class='delete'>| |</button></li>";
 		$("#todos ul").append(todo);
 		$("#toDoMessage").val("");
 	}
