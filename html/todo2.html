@@ -1,7 +1,17 @@
 <html>
  	<head>
 		<title>Your To Do's - PLANDO</title>
-		
+		<!--<style>
+			button {
+				height:20px;
+				width: 20px;
+				text-align: center;
+				padding-left: 0px;
+				padding-right: 0px;
+				margin-left:0px;
+				margin-right: 0px;
+			}
+		</style>-->
 	</head>
 	
 	<body>
@@ -17,24 +27,27 @@
 				<button id="doneSort">✔</button>
 			</section>
 			
-			<section id="todos">
+			<section id="todos" >
 				<ul>
 					<li id="newToDo" class="todo">
 						<form onsubmit="return false;">
 							<input type="checkbox" disabled="true" />
 							<input id="toDoMessage" type="text" placeholder="New to do" />
+							<button id="addDate"><span style="font-family:Wingdings">&#191;</span></button>
 							<button id="addButton">+</button>
+							<br />
+							<span class="dateInput"><input type="date" /><input type="time" /></span>
 						</form>
 					</li>
 					
 					<li class="todo">
-						<input type="checkbox" /><span contenteditable="true" >You can edit this text by clicking on it and type!</span><br/>
-						<span>Due date DD-MM-YYYY</span> <button class='delete'>||</button>
+						<input type="checkbox" /><span contenteditable="true" >You can edit this text by clicking on it and type!</span><button class='delete'>||</button><br/>
+						<span class="duedate">Due date DD-MM-YYYY</span> 
 					</li>
 
 					<li class="todo">
-						<input type="checkbox" /><span contenteditable="true" >You can click/tap here too!</span><br/>
-						<span>Due date DD-MM-YYYY</span> <button class='delete'>||</button>
+						<input type="checkbox" /><span contenteditable="true" >You can click/tap here too!</span><button class='delete'>||</button><br/>
+						<span class="duedate">Due date DD-MM-YYYY</span> 
 					</li>
 					
 				</ul>
