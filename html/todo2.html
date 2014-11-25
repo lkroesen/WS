@@ -12,6 +12,10 @@
 				margin-right: 0px;
 			}
 		</style>-->
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="javascripts/todo.js"></script>
+		<script src="javascripts/functions.js"></script>
+		<script src="javascripts/listeners.js"></script>
 	</head>
 	
 	<body>
@@ -34,6 +38,13 @@
 							<input type="checkbox" disabled="true" />
 							<input id="toDoMessage" type="text" placeholder="New to do" />
 							<button id="addDate"><span style="font-family:Wingdings">&#191;</span></button>
+							<span class="priority">
+								<select>
+									<option value='1'>!</option>
+									<option value='2'>!!</option>
+									<option value='3'>!!!</option>
+								</select>
+							</span>
 							<button id="addButton">+</button>
 							<br />
 							<span class="dateInput"><input type="date" /><input type="time" /></span>
@@ -41,21 +52,34 @@
 					</li>
 					
 					<li class="todo">
-						<input type="checkbox" /><span contenteditable="true" >You can edit this text by clicking on it and type!</span><button class='delete'>||</button><br/>
+						<input type="checkbox" /><span class="message" contenteditable="true" >You can edit this text by clicking on it and type!</span><button class='delete'>||</button><br/>
 						<span class="duedate">Due date DD-MM-YYYY</span> 
+						<span class="priority">
+							<select>
+									<option value='1'>!</option>
+									<option value='2'>!!</option>
+									<option value='3'>!!!</option>
+							</select>
+						</span>
 					</li>
 
 					<li class="todo">
-						<input type="checkbox" /><span contenteditable="true" >You can click/tap here too!</span><button class='delete'>||</button><br/>
+						<input type="checkbox" /><span class="message" contenteditable="true" >You can click/tap here too!</span><button class='delete'>||</button><br/>
 						<span class="duedate">Due date DD-MM-YYYY</span> 
+						<span class="priority">
+							<select>
+									<option value='1'>!</option>
+									<option value='2'>!!</option>
+									<option value='3'>!!!</option>
+							</select>
+						</span>
 					</li>
 					
 				</ul>
 			</section>
 		</main>
 		
-		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-		<script src="javascripts/scripts.js"></script>
+
 	
 	</body>
 </html>

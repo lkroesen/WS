@@ -1,36 +1,31 @@
-'use strict';
+"use strict";
+
+
 
 //This method adds a to do and takes one vairable that is the message.
-function addToDo() {
+var addToDo = function() {
 
 	var message = getToDoMessage();
 	var date = getToDoDueDate();
-	
+	var priority = getPriority();	
 	if(message !== "") {
-		var todo = "<li class='todo'><input type='checkbox' /><span contenteditable='true' >";
-		todo += message;
-		todo += "</span><button class='delete'>||</button><br />";
-		if(date !== null) {
-			todo += "<span class='duedate'>" + date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-			
-			if(date.getHours() !== 0 || date.getMinutes() !== 0)  {
-				todo += " " + date.getHours() + ":" + date.getMinutes();
-			}
-			todo += "</span>";
-		}
+		var todo = new Todo(message, date, false, priority);
+		var todoHTML = todo.toHTML();
 		
-		todo += "</li>";
+		todoList[todo.id] = todo;
 		
-		$("#todos ul").append(todo);
+		$("#todos ul").append(todoHTML);
 		$("#toDoMessage").val("");
 		
 		if ( ($('.dateInput input[type=date]').val() !== "" ) || ( $('.dateInput input[type=time]').val() !== "") ) 
 			toggleDateEditor();
+		
+		console.log(todoList);
 	}
 	
 };
 
-function toggleDateEditor() {
+var toggleDateEditor = function() {
 	if($('.dateInput').is(':hidden')) {
 			$('.dateInput').show();
 		}
@@ -41,36 +36,10 @@ function toggleDateEditor() {
 		}
 }
 
-function getToDoMessage() {
-	return $("#toDoMessage").val();
-}
-
-function getToDoDueDate() {
-	var date = $('.dateInput input[type=date]').val();
-	var time = $('.dateInput input[type=time]').val();
-	
-	if(date !== "") {
-		var year = date.slice(0,4);
-		var month = date.slice(5, 7) - 1;
-		var day = date.slice(8,10);
-
-		var hours = 0;
-		var minutes = 0;
-		if(time !== "") {
-			hours = time.slice(0,2);
-			minutes = time.slice(3, 5);
-		}
-
-		var newDate = new Date(year, month, day, hours, minutes);
-		console.log(newDate);
-		return newDate;
-	}
-	
-	return null;
-}
+var todoList = [];
 
 $(document).ready(function () {
-	
+
 	$('.dateInput').hide();
 	
 	//This method checks if the enterkey is pressed to add a to do to the list.
@@ -96,13 +65,16 @@ $(document).ready(function () {
 		
 		console.log("Remove button clicked.");
 		
-		//Er moet twee keer geklikt worden om het item echt te verwijderen.
-		if($(this).text() === "||") {
-			$(this).text("X")
-			$(this).focusin();
-		}  else if($(this).text() === "X") {
-			$(this).parent().remove();
-		}
+			//Er moet twee keer geklikt worden om het item echt te verwijderen.
+			if($(this).text() === "||") {
+				$(this).text("X")
+				$(this).focusin();
+			}  else if($(this).text() === "X") {
+				var id = $(this).parent().attr('id');
+				$(this).parent().remove();
+				todoList[id] = null;
+			}
+	
 		
 		//Als de gebruiker ergens anders klikt verandert de knop weer terug.
 		$('ul').on('blur', 'li button.delete', function() {
@@ -117,10 +89,14 @@ $(document).ready(function () {
 			console.log("check");
 			$(this).parent().css('text-decoration','line-through');
 			$(this).parent().css('color','grey');
+			var id = $(this).parent().attr('id');
+			todoList[id].done = true;
 		} else {
 			$(this).parent().css('text-decoration','none');
 			$(this).parent().css('color','black');
 			console.log("uncheck");
+			var id = $(this).parent().attr('id');
+			todoList[id].done = false;
 		}
 	});
 		
@@ -129,7 +105,17 @@ $(document).ready(function () {
 		if(key.which === 13) {
 			console.log("BLUR IT!");
 			$(this).blur();
+			
 			return false;
+		}
+	});
+	
+	$('ul').on('blur', '.todo', function() {
+		var id = $(this).attr('id');
+		if(id !== "newToDo") {
+			console.log(id);
+			todoList[id].message = $(this).children('.message').text();
+			console.log(todoList);
 		}
 	});
 	
