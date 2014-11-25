@@ -28,12 +28,12 @@ var addToDo = function() {
 var toggleDateEditor = function() {
 	if($('.dateInput').is(':hidden')) {
 			$('.dateInput').show();
-		}
-		else {
-			$('.dateInput').hide();
-			$('.dateInput input[type=date]').val("");
-			$('.dateInput input[type=time]').val("");
-		}
+	}
+	else {
+		$('.dateInput').hide();
+		$('.dateInput input[type=date]').val("");
+		$('.dateInput input[type=time]').val("");
+	}
 }
 
 var todoList = [];
@@ -70,7 +70,7 @@ $(document).ready(function () {
 				$(this).text("X")
 				$(this).focusin();
 			}  else if($(this).text() === "X") {
-				var id = $(this).parent().attr('id');
+				var id = $(this).parent().attr('data-todoid');
 				$(this).parent().remove();
 				todoList[id] = null;
 			}
@@ -89,13 +89,13 @@ $(document).ready(function () {
 			console.log("check");
 			$(this).parent().css('text-decoration','line-through');
 			$(this).parent().css('color','grey');
-			var id = $(this).parent().attr('id');
+			var id = $(this).parent().attr('data-todoid');
 			todoList[id].done = true;
 		} else {
 			$(this).parent().css('text-decoration','none');
 			$(this).parent().css('color','black');
 			console.log("uncheck");
-			var id = $(this).parent().attr('id');
+			var id = $(this).parent().attr('data-todoid');
 			todoList[id].done = false;
 		}
 	});
@@ -111,7 +111,7 @@ $(document).ready(function () {
 	});
 	
 	$('ul').on('blur', '.todo', function() {
-		var id = $(this).attr('id');
+		var id = $(this).attr('data-todoid');
 		if(id !== "newToDo") {
 			console.log(id);
 			todoList[id].message = $(this).children('.message').text();

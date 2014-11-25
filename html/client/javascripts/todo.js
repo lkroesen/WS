@@ -14,7 +14,7 @@ function Todo(message, date, done, priority ) {
 	this.id += new Date().getMilliseconds();
 	
 	this.toHTML = function() {
-		var todo = "<li class='todo' id='" + this.id;
+		var todo = "<li class='todo' data-todoid='" + this.id;
 		todo += "'><input type='checkbox' /><span class='message' contenteditable='true' >";
 		todo += message;
 		todo += "</span><button class='delete'>||</button><br />";
