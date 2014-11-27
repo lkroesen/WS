@@ -3,7 +3,7 @@ function Todo(message, date, done, priority ) {
 	this.message = message;
 	this.date = date;
 	this.done = done;
-	this.priority = priority;
+	this.priority = parseInt(priority);
 	
 	this.id = new Date().getFullYear();
 	this.id *= new Date().getMonth();
@@ -37,6 +37,11 @@ function Todo(message, date, done, priority ) {
 			todo += "</span>";
 		}
 		
+		switch(this.priority){
+				case 1: todo += "<span class='priority'><select><option value='1' selected='selected'>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span>"; break;
+				case 2: todo += "<span class='priority'><select><option value='1'>!</option><option value='2' selected='selected'>!!</option><option value='3'>!!!</option></select></span>"; break;
+				case 3: todo += "<span class='priority'><select><option value='1'>!</option><option value='2'>!!</option><option value='3' selected='selected'>!!!</option></select></span>"; break;
+		}
 		todo += "</li>";
 		
 		return todo;

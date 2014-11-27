@@ -110,12 +110,14 @@ $(document).ready(function () {
 		}
 	});
 	
-	$('ul').on('blur', '.todo', function() {
+	$('ul').on('blur', '.todo:not(#newToDo)', function() {
 		var id = $(this).attr('data-todoid');
-		if(id !== "newToDo") {
+		if(id !== undefined) {
 			console.log(id);
 			todoList[id].message = $(this).children('.message').text();
-			console.log(todoList);
+			console.log(todoList[id]);
+			
+			todoList[id].date = 
 		}
 	});
 	

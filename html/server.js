@@ -59,7 +59,6 @@ app.get("/deletetodo", function(req, res) {
 			return true;
 		});
 	}
-	
 });
 
 console.log("Server listening on port 3000");
