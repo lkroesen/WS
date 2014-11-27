@@ -15,14 +15,18 @@ function Todo(message, date, done, priority ) {
 	
 	this.toHTML = function() {
 		var todo = "<li class='todo' data-todoid='" + this.id;
-		todo += "'><input type='checkbox' /><span class='message' contenteditable='true' >";
+		todo += "'><input type='checkbox' ";
+		if(this.done) {
+			todo+= "checked";
+		}
+		todo += "/><span class='message' contenteditable='true' >";
 		todo += message;
 		todo += "</span><button class='delete'>||</button>";
-
+		
 		switch(this.priority){
-				case 1: todo += "<span class='priority'><select><option value='1' selected='selected'>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span>"; break;
-				case 2: todo += "<span class='priority'><select><option value='1'>!</option><option value='2' selected='selected'>!!</option><option value='3'>!!!</option></select></span>"; break;
-				case 3: todo += "<span class='priority'><select><option value='1'>!</option><option value='2'>!!</option><option value='3' selected='selected'>!!!</option></select></span>"; break;
+				case 1: todo += "<span class='priority'><select><option value='1' selected>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span>"; break;
+				case 2: todo += "<span class='priority'><select><option value='1'>!</option><option value='2' selected>!!</option><option value='3'>!!!</option></select></span>"; break;
+				case 3: todo += "<span class='priority'><select><option value='1'>!</option><option value='2'>!!</option><option value='3' selected>!!!</option></select></span>"; break;
 		}
 		
 		if(date !== null) {
@@ -38,6 +42,10 @@ function Todo(message, date, done, priority ) {
 		todo += "</li>";
 		
 		return todo;
+	}
+	
+	this.sendToServer = function() {
+		$.getJSON("localhost:3000/addtodo?data=" + JSON.stringify(this), function(){console.log("Gelukt")});
 	}
 }
 

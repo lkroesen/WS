@@ -30,8 +30,8 @@ app.get("/todos", function(req, res) {
 app.get("/addtodo", function(req, res) {
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	if(query['todo'] !== undefined) {
-		var todo = JSON.parse(query['todo']);
+	if(query['data'] !== undefined) {
+		var todo = JSON.parse(query['data']);
 		console.log(todos);
 		
 		todos[todo.id] = todo;
@@ -60,6 +60,8 @@ app.get("/deletetodo", function(req, res) {
 		});
 	}
 });
+
+
 
 console.log("Server listening on port 3000");
 /*

@@ -1,42 +1,8 @@
 "use strict";
 
-
-
-//This method adds a to do and takes one vairable that is the message.
-var addToDo = function() {
-
-	var message = getToDoMessage();
-	var date = getToDoDueDate();
-	var priority = getPriority();	
-	if(message !== "") {
-		var todo = new Todo(message, date, false, priority);
-		var todoHTML = todo.toHTML();
-		
-		todoList[todo.id] = todo;
-		
-		$("#todos ul").append(todoHTML);
-		$("#toDoMessage").val("");
-		
-		if ( ($('.dateInput input[type=date]').val() !== "" ) || ( $('.dateInput input[type=time]').val() !== "") ) 
-			toggleDateEditor();
-		
-		console.log(todoList);
-	}
-	
-};
-
-var toggleDateEditor = function() {
-	if($('.dateInput').is(':hidden')) {
-			$('.dateInput').show();
-	}
-	else {
-		$('.dateInput').hide();
-		$('.dateInput input[type=date]').val("");
-		$('.dateInput input[type=time]').val("");
-	}
-}
-
 var todoList = [];
+
+var dueDateSelector = "<span class='dateInput'><input type='date' /><input type='time' /></span>"
 
 $(document).ready(function () {
 
@@ -52,7 +18,6 @@ $(document).ready(function () {
 		}
 	});
 	
-	
 	//This method checks if the + button is pressed to add a to do to the list.
 	$('#addButton').on('click', function() {
 		addToDo();
@@ -64,17 +29,23 @@ $(document).ready(function () {
 	$('ul').on('click', 'li button.delete', function() {
 		
 		console.log("Remove button clicked.");
-		
-			//Er moet twee keer geklikt worden om het item echt te verwijderen.
-			if($(this).text() === "||") {
-				$(this).text("X")
-				$(this).focusin();
-			}  else if($(this).text() === "X") {
-				var id = $(this).parent().attr('data-todoid');
-				$(this).parent().remove();
-				todoList[id] = null;
-			}
-	
+
+		//Er moet twee keer geklikt worden om het item echt te verwijderen.
+		if($(this).text() === "||") {
+			$(this).text("X")
+			$(this).focusin();
+		} else if($(this).text() === "X") {
+			var id = $(this).parent().attr('data-todoid');
+			$(this).parent().remove();
+			todoList[id] = null;
+			todoList = todoList.filter(function(element) {
+				if(element === null || element === "") {
+					return false;
+				}
+			});
+			return true;
+
+		}
 		
 		//Als de gebruiker ergens anders klikt verandert de knop weer terug.
 		$('ul').on('blur', 'li button.delete', function() {
@@ -83,7 +54,7 @@ $(document).ready(function () {
 	});
 	
 	//This method handles the checkbox behaviour.
-	$('ul').on('click', 'li input[type=checkbox]', function() {
+	$('ul').on('change', 'li input[type=checkbox]', function() {
 		console.log("checkbox clicked");
 		if($(this).is(':checked')) {
 			console.log("check");
@@ -110,15 +81,23 @@ $(document).ready(function () {
 		}
 	});
 	
+	//This method listens to the textfield and updates the to do.
 	$('ul').on('blur', '.todo:not(#newToDo)', function() {
 		var id = $(this).attr('data-todoid');
+		$(this).children(".dateInput").remove();
 		if(id !== undefined) {
-			console.log(id);
 			todoList[id].message = $(this).children('.message').text();
-			console.log(todoList[id]);
+			todoList[id].sendToServer();
 			
-			todoList[id].date = null;
 		}
+	});
+	
+	//This method listens if the priority is changed.
+	$('ul').on('change', 'li:not(#newToDo) .priority select', function() {
+		var id = $(this).parent().parent().attr('data-todoid');
+		todoList[id].priority = $(this).val();
+		console.log("Changed priority");
+		console.log(todoList[id].priority);
 	});
 	
 	//This method listens if the button to add a date is clicked.
@@ -126,11 +105,65 @@ $(document).ready(function () {
 		toggleDateEditor();
 	});
 	
-	//This method listens if the date is clicked. if so 
-	$('ul').on('click', 'li .duedate', function() {
-			   
-			   
+	//This method listens to the dateSort button.
+	$('#dateSort').on('click', function(){
+		var sort = $(this).attr('data-sort');
+		if(sort == 'down') {
+			$(this).attr('data-sort', 'up');
+			todoList.sort(function(a, b) {
+				return a.date - b.date;
+			});
+		} else if(sort == 'up') {
+			$(this).attr('data-sort', 'down');
+			todoList.sort(function(a,b) {
+				return b.date - a.date;
+			});
+		}
+		
+		$('ul').find('li:not(#newToDo)').remove();
+		for(var todo in todoList) {
+			$('ul').append(todoList[todo].toHTML());
+		}
+	});
+	
+	$('#urgencySort').on('click', function(){
+		var sort = $(this).attr('data-sort');
+		if(sort == 'down') {
+			$(this).attr('data-sort', 'up');
+			todoList.sort(function(a,b) {
+				return a.priority - b.priority;
+			});
+		} else if(sort == 'up') {
+			$(this).attr('data-sort', 'down');
+			todoList.sort(function(a, b) {
+				return b.priority - a.priority;
+			});
+		}
+		
+		$('ul').find('li:not(#newToDo)').remove();
+		for(var todo in todoList) {
+			$('ul').append(todoList[todo].toHTML());
+		}
+	});
+	
+	$('#doneSort').on('click', function(){
+		var sort = $(this).attr('data-sort');
+		if(sort == 'down') {
+			$(this).attr('data-sort', 'up');
+			todoList.sort(function(a,b) {
+				return a.done - b.done;
+			});
+		} else if(sort == 'up') {
+			$(this).attr('data-sort', 'down');
+			todoList.sort(function(a, b) {
+				return b.done - a.done;
+			});
+		}
+		
+		$('ul').find('li:not(#newToDo)').remove();
+		for(var todo in todoList) {
+			$('ul').append(todoList[todo].toHTML());
+		}
 	});
 		
-	
 });
