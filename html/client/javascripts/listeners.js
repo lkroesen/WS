@@ -6,7 +6,7 @@
 var addToDo = function() {
 
 	var message = getToDoMessage();
-	var date = getToDoDueDate();
+	var date = getToDoDueDate($("#newToDo"));
 	var priority = getPriority();	
 	if(message !== "") {
 		var todo = new Todo(message, date, false, priority);
@@ -37,6 +37,8 @@ var toggleDateEditor = function() {
 }
 
 var todoList = [];
+
+var dueDateSelector = "<span class='dateInput'><input type='date' /><input type='time' /></span>"
 
 $(document).ready(function () {
 
@@ -112,24 +114,33 @@ $(document).ready(function () {
 	
 	$('ul').on('blur', '.todo:not(#newToDo)', function() {
 		var id = $(this).attr('data-todoid');
+		$(this).children(".dateInput").remove();
 		if(id !== undefined) {
 			console.log(id);
 			todoList[id].message = $(this).children('.message').text();
 			console.log(todoList[id]);
 			
-			todoList[id].date = null;
+			todoList[id].date = getToDoDueDate($(this));
+			
 		}
+	});
+	
+	//This method listens if a todo is clicked and adds or changes it a date selector.
+	$('ul').on('click', '.todo:not(#newToDo)', function() {
+		var id = $(this).attr('data-todoid');
+		var date = todoList[id].date;
+		console.log("clicked todo");
+		$(this).append(dueDateSelector);
+		if(date != null) {
+			$(this).children('.dueDate').hide();
+			$(this).children('.dateInput input[type=date]').val(date.getDay() + "-" + date.getMonth() + "-" + date.getYear());
+		}
+		
 	});
 	
 	//This method listens if the button to add a date is clicked.
 	$('#newToDo #addDate').on('click', function() {
 		toggleDateEditor();
-	});
-	
-	//This method listens if the date is clicked. if so 
-	$('ul').on('click', 'li .duedate', function() {
-			   
-			   
 	});
 		
 	
