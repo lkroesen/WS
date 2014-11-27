@@ -20,12 +20,19 @@ function Todo(message, date, done, priority ) {
 		todo += "</span><button class='delete'>||</button>";
 		//<select>
 		todo += "<span class='priority'><select id='select" + this.id + "'>";
-		// this should be able to find what is selected but it can't...
-		var foobaar = $('#Main_Selector').find(":selected").text();
-		console.log(foobaar);
+		todo += "<option selected='selected'>" 
 
-		todo += "<option selected='selected'>" + foobaar + "</option>";
-		
+		console.log(priority);
+
+		if (priority === 1)
+		{todo += "!" + "</option>";}
+
+		if (priority === 2)
+		{todo += "!!" + "</option>";}
+
+		if (priority === 3)
+		{todo += "!!!" + "</option>";}
+
 		todo += "<option value='1'>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span><br />";
 		
 		if(date !== null) {
