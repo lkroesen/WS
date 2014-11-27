@@ -117,7 +117,7 @@ $(document).ready(function () {
 			todoList[id].message = $(this).children('.message').text();
 			console.log(todoList[id]);
 			
-			todoList[id].date = 
+			todoList[id].date = null;
 		}
 	});
 	
