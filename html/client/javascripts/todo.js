@@ -18,22 +18,12 @@ function Todo(message, date, done, priority ) {
 		todo += "'><input type='checkbox' /><span class='message' contenteditable='true' >";
 		todo += message;
 		todo += "</span><button class='delete'>||</button>";
-		//<select>
-		todo += "<span class='priority'><select id='select" + this.id + "'>";
-		todo += "<option selected='selected'>" 
 
-		console.log(priority);
-
-		if (priority === 1)
-		{todo += "!" + "</option>";}
-
-		if (priority === 2)
-		{todo += "!!" + "</option>";}
-
-		if (priority === 3)
-		{todo += "!!!" + "</option>";}
-
-		todo += "<option value='1'>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span><br />";
+		switch(this.priority){
+				case 1: todo += "<span class='priority'><select><option value='1' selected='selected'>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span>"; break;
+				case 2: todo += "<span class='priority'><select><option value='1'>!</option><option value='2' selected='selected'>!!</option><option value='3'>!!!</option></select></span>"; break;
+				case 3: todo += "<span class='priority'><select><option value='1'>!</option><option value='2'>!!</option><option value='3' selected='selected'>!!!</option></select></span>"; break;
+		}
 		
 		if(date !== null) {
 			todo += "<span class='duedate'>" + date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -44,11 +34,7 @@ function Todo(message, date, done, priority ) {
 			todo += "</span>";
 		}
 		
-		switch(this.priority){
-				case 1: todo += "<span class='priority'><select><option value='1' selected='selected'>!</option><option value='2'>!!</option><option value='3'>!!!</option></select></span>"; break;
-				case 2: todo += "<span class='priority'><select><option value='1'>!</option><option value='2' selected='selected'>!!</option><option value='3'>!!!</option></select></span>"; break;
-				case 3: todo += "<span class='priority'><select><option value='1'>!</option><option value='2'>!!</option><option value='3' selected='selected'>!!!</option></select></span>"; break;
-		}
+
 		todo += "</li>";
 		
 		return todo;
