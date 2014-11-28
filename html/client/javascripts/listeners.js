@@ -27,7 +27,9 @@ $(document).ready(function () {
     	$.getJSON("/todos", function(response) {
 			for(var element in response) {
 				if( !($.inArray(element, todoList)) ) {
-					var todo = new Todo(element.message, element.date, element.done, element.priority);
+					var datest = JSON.parse(element.date);
+					var date = new Date(datest);
+					var todo = new Todo(element.message, date, element.done, element.priority);
 					$('ul').append(todo.toHTML());
 					todoList.push(todo);
 				}
