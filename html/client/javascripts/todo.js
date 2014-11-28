@@ -5,13 +5,15 @@ function Todo(message, date, done, priority ) {
 	this.done = done;
 	this.priority = parseInt(priority);
 	
-	this.id = new Date().getFullYear();
-	this.id *= new Date().getMonth();
-	this.id *= new Date().getDate();
-	this.id *= new Date().getHours();
-	this.id *= new Date().getMinutes();
-	this.id -= new Date().getSeconds();
-	this.id += new Date().getMilliseconds();
+	var idGenerator = new Date();
+	
+	this.id = idGenerator.getMonth();
+	this.id *= idGenerator.getDate();
+	this.id *= idGenerator.getHours();
+	this.id *= idGenerator.getMinutes();
+	this.id -= idGenerator.getSeconds();
+	this.id += idGenerator.getMilliseconds();
+	this.id = this.id.toString();
 	
 	this.toHTML = function() {
 		var todo = "<li class='todo' data-todoid='" + this.id;
@@ -30,12 +32,23 @@ function Todo(message, date, done, priority ) {
 		}
 		
 		if(date !== null) {
-			todo += "<span class='duedate'>" + date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-			
-			if(date.getHours() !== 0 || date.getMinutes() !== 0)  {
-				todo += " " + date.getHours() + ":" + date.getMinutes();
+			todo += "<span class='duedate'><input type='date' value='"; 
+			todo += this.date.getFullYear() + "-";
+			if((this.date.getMonth() + 1) < 10) {
+				todo += "0";
 			}
+			
+			todo += (this.date.getMonth() + 1) + "-";
+			
+			if(this.date.getDate() < 10) {
+				todo += "0";
+			} 
+			todo += this.date.getDate();
+			todo += "'/><input type='time' value='";
+			todo += this.date.getHours() + ":" + this.date.getMinutes() + "'/>";
 			todo += "</span>";
+		} else {
+			todo += "<span class='duedate'><input type='date'/><input type='time'/></span>";
 		}
 		
 
@@ -45,7 +58,9 @@ function Todo(message, date, done, priority ) {
 	}
 	
 	this.sendToServer = function() {
+		console.log("Starting...");
 		$.getJSON("localhost:3000/addtodo?data=" + JSON.stringify(this), function(){console.log("Gelukt")});
+		console.log("Ended.");
 	}
 }
 

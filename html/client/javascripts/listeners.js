@@ -37,14 +37,8 @@ $(document).ready(function () {
 		} else if($(this).text() === "X") {
 			var id = $(this).parent().attr('data-todoid');
 			$(this).parent().remove();
-			todoList[id] = null;
-			todoList = todoList.filter(function(element) {
-				if(element === null || element === "") {
-					return false;
-				}
-			});
-			return true;
-
+			todoList.splice(getArrayLocation(id),1);
+			console.log(todoList);
 		}
 		
 		//Als de gebruiker ergens anders klikt verandert de knop weer terug.
@@ -61,13 +55,13 @@ $(document).ready(function () {
 			$(this).parent().css('text-decoration','line-through');
 			$(this).parent().css('color','grey');
 			var id = $(this).parent().attr('data-todoid');
-			todoList[id].done = true;
+			todoList[getArrayLocation(id)].done = true;
 		} else {
 			$(this).parent().css('text-decoration','none');
 			$(this).parent().css('color','black');
 			console.log("uncheck");
 			var id = $(this).parent().attr('data-todoid');
-			todoList[id].done = false;
+			todoList[getArrayLocation(id)].done = false;
 		}
 	});
 		
@@ -75,29 +69,29 @@ $(document).ready(function () {
 	$('ul').on('keypress', '.todo span', function(key) {
 		if(key.which === 13) {
 			console.log("BLUR IT!");
-			$(this).blur();
-			
+			$(this).parent().blur();
 			return false;
 		}
 	});
 	
-	//This method listens to the textfield and updates the to do.
-	$('ul').on('blur', '.todo:not(#newToDo)', function() {
+	//This method updates the to do on blur.
+	$('ul').on('blur', 'li:not(#newToDo)', function() {
+		var message = $(this).find('.message').text();
+		var done = $(this).find('input[type=checkbox]').is(':checked')
+		var priority = $(this).find('.priority select').val();
+		
+		var dateString = $(this).find('.duedate input[type="date"]').val();
+		var time = $(this).find('.duedate input[type=time]').val();
+		var date = getToDoDueDate(dateString, time);
 		var id = $(this).attr('data-todoid');
-		$(this).children(".dateInput").remove();
-		if(id !== undefined) {
-			todoList[id].message = $(this).children('.message').text();
-			todoList[id].sendToServer();
-			
-		}
-	});
-	
-	//This method listens if the priority is changed.
-	$('ul').on('change', 'li:not(#newToDo) .priority select', function() {
-		var id = $(this).parent().parent().attr('data-todoid');
-		todoList[id].priority = $(this).val();
-		console.log("Changed priority");
-		console.log(todoList[id].priority);
+		
+		var location = getArrayLocation(id);
+		todoList[location].message = message;
+		todoList[location].date = date;
+		todoList[location].priority = priority;
+		todoList[location].done = done;
+		console.log("Changed the todo");
+		todoList[location].sendToServer();
 	});
 	
 	//This method listens if the button to add a date is clicked.
@@ -105,6 +99,10 @@ $(document).ready(function () {
 		toggleDateEditor();
 	});
 	
+	/////////////////////////////////////////////////////
+	/*
+		The sort listeners.
+	*/
 	//This method listens to the dateSort button.
 	$('#dateSort').on('click', function(){
 		var sort = $(this).attr('data-sort');

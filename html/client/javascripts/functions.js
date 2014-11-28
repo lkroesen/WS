@@ -6,11 +6,7 @@ var getPriority = function() {
 	return $('#newToDo select').val();
 }
 
-var getToDoDueDate = function(id) {
-	
-	var date = $('.dateInput input[type=date]').val();
-	var time = $('.dateInput input[type=time]').val();
-
+var getToDoDueDate = function(date, time) {
 	if(date !== "") {
 		var year = date.slice(0,4);
 		var month = date.slice(5, 7) - 1;
@@ -32,16 +28,29 @@ var getToDoDueDate = function(id) {
 	return null;
 }
 
+var getArrayLocation= function(id) {
+	for(var x = 0; x < todoList.length; x++) {
+		if(todoList[x].id == id) {
+			return x;
+		}
+	}
+	
+}
+
 var addToDo = function() {
 
 	var message = getToDoMessage();
-	var date = getToDoDueDate();
+	
+	var dateString = $('.dateInput input[type=date]').val();
+	var time = $('.dateInput input[type=time]').val();
+	var date = getToDoDueDate(dateString, time);
+	
 	var priority = getPriority();	
 	if(message !== "") {
 		var todo = new Todo(message, date, false, priority);
 		var todoHTML = todo.toHTML();
 		
-		todoList[todo.id] = todo;
+		todoList[todoList.length] = todo;
 		
 		$("#todos ul").append(todoHTML);
 		$("#toDoMessage").val("");
@@ -49,7 +58,7 @@ var addToDo = function() {
 		if ( ($('.dateInput input[type=date]').val() !== "" ) || ( $('.dateInput input[type=time]').val() !== "") ) 
 			toggleDateEditor();
 		console.log(todoList);
-		todoList[todo.id].sendToServer();
+		todoList[getArrayLocation(todo.id)].sendToServer();
 	}
 	
 }
