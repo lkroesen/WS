@@ -9,9 +9,31 @@ $(document).ready(function () {
 	$('.dateInput').hide();
 	
 	$.getJSON('/todos', function(response) {
-		var todosData = JSON.parse(response);
-		console.log(todosData);
+		
+		console.log(response);
+		
+		for(var i = 0; i < response.length; i++) {
+			var todo = new Todo(response[i].message, response[i].date, response[i].done, response[i].priority);
+			todoList[i] = todo;
+			$('ul').find('li:not(#newToDo)').remove();
+			$('ul').append(todo.toHTML());
+		}
+		
+		
 	});
+	
+	setInterval(function () {
+    	console.log("Fetching the todo list from the server.");
+    	$.getJSON("/todos", function(response) {
+			for(var element in response) {
+				if( !($.inArray(element, todoList)) ) {
+					var todo = new Todo(element.message, element.date, element.done, element.priority);
+					$('ul').append(todo.toHTML());
+					todoList.push(todo);
+				}
+			}
+		});
+    }, 2000);
 	
 	//This method checks if the enterkey is pressed to add a to do to the list.
 	$('#newToDo form').on('keypress', function (key) {
@@ -93,7 +115,7 @@ $(document).ready(function () {
 		todoList[location].priority = priority;
 		todoList[location].done = done;
 		console.log("Changed the todo");
-		//todoList[location].sendToServer();
+		todoList[location].sendToServer();
 	});
 	
 	//This method listens if the button to add a date is clicked.
@@ -121,8 +143,8 @@ $(document).ready(function () {
 		}
 		
 		$('ul').find('li:not(#newToDo)').remove();
-		for(var todo in todoList) {
-			$('ul').append(todoList[todo].toHTML());
+		for(var i=0; i < todoList.length; i++) {
+			$('ul').append(todoList[i].toHTML());
 		}
 	});
 	
@@ -141,8 +163,8 @@ $(document).ready(function () {
 		}
 		
 		$('ul').find('li:not(#newToDo)').remove();
-		for(var todo in todoList) {
-			$('ul').append(todoList[todo].toHTML());
+		for(var i=0; i < todoList.length; i++) {
+			$('ul').append(todoList[i].toHTML());
 		}
 	});
 	
@@ -161,8 +183,8 @@ $(document).ready(function () {
 		}
 		
 		$('ul').find('li:not(#newToDo)').remove();
-		for(var todo in todoList) {
-			$('ul').append(todoList[todo].toHTML());
+		for(var i=0; i < todoList.length; i++) {
+			$('ul').append(todoList[i].toHTML());
 		}
 	});
 		

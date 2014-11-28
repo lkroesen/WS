@@ -7,11 +7,7 @@ app = express();
 
 http.createServer(app).listen(3000);
 
-var todo1 = {id : 1, message : "First todo", done : false, priority : 3};
-var todo2 = {id : 2, message : "Second todo", done : true, priority : 1};
 var todos = [];
-//todos[todo1.id] = todo1;
-//todos[todo2.id] = todo2;
 
 app.use(express.static(__dirname + "/client"));
 app.get("/", function(req, res) {
