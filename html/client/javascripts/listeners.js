@@ -18,24 +18,34 @@ $(document).ready(function () {
 			$('ul').find('li:not(#newToDo)').remove();
 			$('ul').append(todo.toHTML());
 		}
-		
-		
 	});
-	
+	/*
 	setInterval(function () {
     	console.log("Fetching the todo list from the server.");
     	$.getJSON("/todos", function(response) {
-			for(var element in response) {
-				if( !($.inArray(element, todoList)) ) {
-					var datest = JSON.parse(element.date);
+			console.log("Not Entered loop");
+			for(var i = 0; i<response.length; i++) {
+				console.log("Entered loop");
+				
+				if(response[i].date !== null) {
+					var datest = JSON.parse(response[i].date);
 					var date = new Date(datest);
-					var todo = new Todo(element.message, date, element.done, element.priority);
+				} else {
+					var date = null;
+				}
+				console.log(date);
+				var todo = new Todo(response[i].message, date, response[i].done, response[i].priority, response[i].id);	
+				
+				if( !($.inArray(todo, todoList)) ) {
+					
 					$('ul').append(todo.toHTML());
+					
 					todoList.push(todo);
 				}
 			}
 		});
     }, 2000);
+	*/
 	
 	//This method checks if the enterkey is pressed to add a to do to the list.
 	$('#newToDo form').on('keypress', function (key) {

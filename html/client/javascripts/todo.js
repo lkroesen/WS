@@ -1,20 +1,23 @@
 "use strict";
-function Todo(message, date, done, priority ) {
+function Todo(message, date, done, priority, id ) {
 	this.message = message;
 	this.date = date;
 	this.done = done;
 	this.priority = parseInt(priority);
 	
-	var idGenerator = new Date();
-	
-	this.id = idGenerator.getMonth();
-	this.id *= idGenerator.getDate();
-	this.id *= idGenerator.getHours();
-	this.id *= idGenerator.getMinutes();
-	this.id -= idGenerator.getSeconds();
-	this.id += idGenerator.getMilliseconds();
-	this.id = this.id.toString();
-	
+	if(id === null) {
+		var idGenerator = new Date();
+
+		this.id = idGenerator.getMonth();
+		this.id *= idGenerator.getDate();
+		this.id *= idGenerator.getHours();
+		this.id *= idGenerator.getMinutes();
+		this.id -= idGenerator.getSeconds();
+		this.id += idGenerator.getMilliseconds();
+		this.id = this.id.toString();
+	} else {
+		this.id = id;
+	}
 	this.toHTML = function() {
 		var todo = "<li class='todo' data-todoid='" + this.id;
 		todo += "'><input type='checkbox' ";
