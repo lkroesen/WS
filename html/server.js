@@ -10,8 +10,8 @@ http.createServer(app).listen(3000);
 var todo1 = {id : 1, message : "First todo", done : false, priority : 3};
 var todo2 = {id : 2, message : "Second todo", done : true, priority : 1};
 var todos = [];
-todos[todo1.id] = todo1;
-todos[todo2.id] = todo2;
+//todos[todo1.id] = todo1;
+//todos[todo2.id] = todo2;
 
 app.use(express.static(__dirname + "/client"));
 app.get("/", function(req, res) {
@@ -24,7 +24,6 @@ app.get("/", function(req, res) {
 app.get("/todos", function(req, res) {
 	res.json(todos);
 	res.end("Thank you!");
-	console.log("SENDING JSON BITCH");
 });
 
 app.get("/addtodo", function(req, res) {
@@ -34,36 +33,44 @@ app.get("/addtodo", function(req, res) {
 		var todo = JSON.parse(query['data']);
 		console.log(todos);
 		
-		todos[todo.id] = todo;
-		console.log("gelukt");
+		var location = getArrayLocation(todo.id);
+		if(location == -1) {
+			todos[todos.length] = todo;	
+		} else {
+			todos[location] = todo;
+		}
+		
+		console.log("add to do");
 		
 	}
 	res.send("Todo added");
 	res.end("Todo added");
-	
+	console.log(todos);
 });
 
 app.get("/deletetodo", function(req, res) {
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	
+	console.log("Delete");
 	if(query['id'] !== undefined) {
 		var id = query['id'];
-		todos[id] = null;
-		console.log(todos);
+		todos.splice(getArrayLocation(id), 1);
 		res.end("Deleted!");
-		todos = todos.filter(function(element) {
-			if(element === null || element === "") {
-				return false;
-			}
-			return true;
-		});
 	}
 });
 
 
 
 console.log("Server listening on port 3000");
+
+var getArrayLocation= function(id) {
+	for(var x = 0; x < todos.length; x++) {
+		if(todos[x].id == id) {
+			return parseInt(x);
+		}
+	}
+	return -1;
+}
 /*
 server = http.createServer(function (req, res) {
   res.writeHead(200, {"Content-Type":"text/html"});

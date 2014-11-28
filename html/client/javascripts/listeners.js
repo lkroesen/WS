@@ -8,6 +8,11 @@ $(document).ready(function () {
 
 	$('.dateInput').hide();
 	
+	$.getJSON('/todos', function(response) {
+		var todosData = JSON.parse(response);
+		console.log(todosData);
+	});
+	
 	//This method checks if the enterkey is pressed to add a to do to the list.
 	$('#newToDo form').on('keypress', function (key) {
 		//Check if enter was pressed. If so, continue.
@@ -35,10 +40,7 @@ $(document).ready(function () {
 			$(this).text("X")
 			$(this).focusin();
 		} else if($(this).text() === "X") {
-			var id = $(this).parent().attr('data-todoid');
-			$(this).parent().remove();
-			todoList.splice(getArrayLocation(id),1);
-			console.log(todoList);
+			removeToDo(this);
 		}
 		
 		//Als de gebruiker ergens anders klikt verandert de knop weer terug.
@@ -91,7 +93,7 @@ $(document).ready(function () {
 		todoList[location].priority = priority;
 		todoList[location].done = done;
 		console.log("Changed the todo");
-		todoList[location].sendToServer();
+		//todoList[location].sendToServer();
 	});
 	
 	//This method listens if the button to add a date is clicked.

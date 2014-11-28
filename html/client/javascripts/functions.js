@@ -28,13 +28,27 @@ var getToDoDueDate = function(date, time) {
 	return null;
 }
 
+
 var getArrayLocation= function(id) {
 	for(var x = 0; x < todoList.length; x++) {
 		if(todoList[x].id == id) {
 			return x;
 		}
 	}
+	return -1;
+}
+
+var removeToDo = function(parent) {
+	console.log("Starting to remove");
+	$(parent).parent().off('blur');
+	var id = $(parent).parent().attr('data-todoid');
+
+	$(parent).parent().remove();
+	console.log(getArrayLocation(id));
+	todoList[getArrayLocation(id)].removeFromServer();
 	
+	todoList.splice(getArrayLocation(id),1);
+	console.log(todoList);
 }
 
 var addToDo = function() {

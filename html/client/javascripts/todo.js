@@ -59,8 +59,12 @@ function Todo(message, date, done, priority ) {
 	
 	this.sendToServer = function() {
 		console.log("Starting...");
-		$.getJSON("localhost:3000/addtodo?data=" + JSON.stringify(this), function(){console.log("Gelukt")});
+		$.getJSON("/addtodo?data=" + JSON.stringify(this), function(){console.log("Gelukt")});
 		console.log("Ended.");
+	}
+	
+	this.removeFromServer = function() {
+		$.get("/deletetodo?id=" + this.id, function() {console.log("removed from server");});
 	}
 }
 
