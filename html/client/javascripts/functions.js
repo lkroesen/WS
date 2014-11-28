@@ -61,7 +61,7 @@ var addToDo = function() {
 	
 	var priority = getPriority();	
 	if(message !== "") {
-		var todo = new Todo(message, date, false, priority);
+		var todo = new Todo(message, date, false, priority, null);
 		var todoHTML = todo.toHTML();
 		
 		todoList[todoList.length] = todo;

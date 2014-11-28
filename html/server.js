@@ -47,7 +47,7 @@ app.get("/addtodo", function(req, res) {
 app.get("/deletetodo", function(req, res) {
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	console.log("Delete");
+	console.log("Delete: " + query['id']);
 	if(query['id'] !== undefined) {
 		var id = query['id'];
 		todos.splice(getArrayLocation(id), 1);

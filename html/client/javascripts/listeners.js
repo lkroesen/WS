@@ -19,7 +19,7 @@ $(document).ready(function () {
 			$('ul').append(todo.toHTML());
 		}
 	});
-	/*
+	
 	setInterval(function () {
     	console.log("Fetching the todo list from the server.");
     	$.getJSON("/todos", function(response) {
@@ -45,7 +45,7 @@ $(document).ready(function () {
 			}
 		});
     }, 2000);
-	*/
+	
 	
 	//This method checks if the enterkey is pressed to add a to do to the list.
 	$('#newToDo form').on('keypress', function (key) {

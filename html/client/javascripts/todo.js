@@ -47,8 +47,8 @@ function Todo(message, date, done, priority, id ) {
 				todo += "0";
 			} 
 			todo += this.date.getDate();
-			todo += "'/><input type='time' value='";
-			todo += this.date.getHours() + ":" + this.date.getMinutes() + "'/>";
+			todo += "' placeholder='dd-mm-yyyy'/><input type='time' value='";
+			todo += this.date.getHours() + ":" + this.date.getMinutes() + "' placeholder='hh:mm'/>";
 			todo += "</span>";
 		} else {
 			todo += "<span class='duedate'><input type='date'/><input type='time'/></span>";
