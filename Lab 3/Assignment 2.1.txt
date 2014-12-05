@@ -1,0 +1,7 @@
+SELECT VERSION(); RETURNS THE CURRENT VERSION OF SQL
+SELECT NOW(); RETURNS THE CURRENT DATE/TIME
+HELP; ERROR
+HELP Contents; What the database can do
+HELP "Data Manipulation"; Returns the commands you can use to manipulate data
+HELP "SHOW DATABASES"; Returns how to use the SHOW DATABASES command
+SHOW DATABASES; show the databases on the server

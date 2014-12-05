@@ -1,0 +1,38 @@
+DESC ItemTag: 
+	ToDoID int(11)
+	TagId 	int(11)
+
+DESC Tag:
+	Id int(11)
+	Text text
+
+DESC ToDoAssignment
+	ToDoID int(11)
+	AssigneeId int(11)
+	AssignDate timestamp
+
+DESC ToDoItem
+	Id int(11)
+	Title text
+	Text text
+	CreationDate timestamp
+	DueDate	timestamp
+	Completed tinyint(1)
+	CompletionData timestamp
+	Priority int(11)
+	ToDoListID int(11)
+	ParentToDo int(11)
+
+DESC ToDoList	
+	Id int(11)
+	Name text
+	CreationDate timestamp
+	Owner int(11)
+	IsPublic tinyint(1)
+
+DESC User
+	Id int(11)
+	Name text
+	Email text
+	Username tinytext
+	Password text
