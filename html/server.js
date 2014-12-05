@@ -18,7 +18,6 @@ var db = mysql.createConnection({
 	user:	'root',
 password:	'root',
 database:	'todo'
-
 })
 
 db.connect(function(err){
@@ -29,10 +28,9 @@ db.connect(function(err){
 });
 
 app.get("/", function(req, res) {
-	
+	db.query("SELECT *",function(err,rows,fields){})
 	res.send("/html/index.html");
-	console.log("SENT REINFORMENTS");
-	
+	console.log("SENT REINFORMENTS");	
 });
 
 app.get("/todos", function(req, res) {
