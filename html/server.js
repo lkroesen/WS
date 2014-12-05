@@ -10,6 +10,24 @@ http.createServer(app).listen(3000);
 var todos = [];
 
 app.use(express.static(__dirname + "/client"));
+
+var mysql = require('mysql')
+var db = mysql.createConnection({
+
+	host:	'localhost',
+	user:	'root',
+password:	'root',
+database:	'todo'
+
+})
+
+db.connect(function(err){
+	if (err)
+	console.log(err);
+	else
+	console.log("DB CONNECTION ACTIVE");
+});
+
 app.get("/", function(req, res) {
 	
 	res.send("/html/index.html");
