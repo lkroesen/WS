@@ -1,0 +1,68 @@
+1. 
+SELECT *
+FROM ToDoList
+WHERE Owner = (
+				SELECT Id
+				FROM User
+                WHERE Username = 'user2'
+			)
+
+2. 
+
+SELECT * 
+FROM ToDoItem
+WHERE ToDoListId = (
+					SELECT Id
+                    FROM ToDoList
+                    WHERE Name = 'School'
+                    )
+
+3. 
+
+SELECT * 
+FROM ToDoItem
+WHERE ToDoListId = (
+					SELECT Id
+                    FROM ToDoList
+                    WHERE Name = 'Shared'
+                    )
+                    
+LIMIT 2, 5
+
+4. 
+
+SELECT * 
+FROM ToDoItem
+WHERE ToDoListId = (
+					SELECT Id
+                    FROM ToDoList
+                    WHERE Name = 'Shared'
+                    )
+					AND CreationDate > '2014-10-01' 
+					AND Completed = 0
+                    AND Priority > 1
+                    
+LIMIT 0,5
+
+
+5. 
+
+SELECT * 
+FROM ToDoItem
+WHERE ParentToDo = 6
+
+
+6. 
+
+SELECT * 
+FROM Tag
+WHERE Id = (
+			SELECT TagId
+            FROM ItemTag
+            WHERE ToDoId = 12
+            )
+
+
+7.
+
+            
