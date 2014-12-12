@@ -13,7 +13,8 @@ $(document).ready(function () {
 		console.log(response);
 		
 		for(var i = 0; i < response.length; i++) {
-			var todo = new Todo(response[i].message, response[i].date, response[i].done, response[i].priority);
+			console.log("Response: " + response);
+			var todo = new Todo(response[i].Text, new Date(response[i].DueDate), response[i].Completed, response[i].Priority);
 			todoList[i] = todo;
 			$('ul').find('li:not(#newToDo)').remove();
 			$('ul').append(todo.toHTML());
@@ -27,8 +28,8 @@ $(document).ready(function () {
 			for(var i = 0; i<response.length; i++) {
 				console.log("Entered loop");
 				
-				if(response[i].date !== null) {
-					var datest = JSON.parse(response[i].date);
+				if(response[i].DueDate !== null) {
+					var datest = JSON.parse(response[i].DueDate);
 					var date = new Date(datest);
 				} else {
 					var date = null;
@@ -45,6 +46,8 @@ $(document).ready(function () {
 			}
 		});
     }, 2000);
+	
+
 	
 	
 	//This method checks if the enterkey is pressed to add a to do to the list.

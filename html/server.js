@@ -16,26 +16,32 @@ var db = mysql.createConnection({
 
 	host:	'localhost',
 	user:	'root',
-password:	'root',
+password:	'',
 database:	'todo'
 })
 
 db.connect(function(err){
 	if (err)
 	console.log(err);
-	else
+	else {
 	console.log("DB CONNECTION ACTIVE");
+	}
 });
 
 app.get("/", function(req, res) {
-	db.query("SELECT *",function(err,rows,fields){})
-	res.send("/html/index.html");
-	console.log("SENT REINFORMENTS");	
+	console.log("SENT REINFORMENTS");
+	res.send("index.html");
+		
 });
 
+//Retrieve the todos from the database that were completed already.
 app.get("/todos", function(req, res) {
-	res.json(todos);
-	res.end("Thank you!");
+	console.log("Sent todos");
+	db.query("SELECT * FROM ToDoItem WHERE Completed  = 1",function(err,rows,fields){
+		if(err) {console.error(err);}
+		if(rows){res.send(JSON.stringify(rows));}
+	});	
+	
 });
 
 app.get("/addtodo", function(req, res) {
@@ -67,6 +73,7 @@ app.get("/deletetodo", function(req, res) {
 	if(query['id'] !== undefined) {
 		var id = query['id'];
 		todos.splice(getArrayLocation(id), 1);
+		console.log(todos);
 		res.end("Deleted!");
 	}
 });

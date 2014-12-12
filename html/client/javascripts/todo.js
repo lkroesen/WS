@@ -1,7 +1,21 @@
 "use strict";
-function Todo(message, date, done, priority, id ) {
+function Todo(message, date, done, priority, id, compDate, ToDoListId ) {
 	this.message = message;
+	this.CreationDate = new Date();
 	this.date = date;
+	console.log(date);
+	if(compDate != undefined) {
+		this.CompletionDate = compDate;
+	} else {
+		this.CompletionDate = null;
+	}
+	
+	if(ToDoListId != undefined) {
+		this.ToDoListId = ToDoListId;
+	} else {
+		this.ToDoListId = null;
+	}
+	
 	this.done = done;
 	this.priority = parseInt(priority);
 	
@@ -18,6 +32,12 @@ function Todo(message, date, done, priority, id ) {
 	} else {
 		this.id = id;
 	}
+	
+	if(this.done) {
+		this.CompletionDate = new Date();
+	}
+	
+	
 	this.toHTML = function() {
 		var todo = "<li class='todo' data-todoid='" + this.id;
 		todo += "'><input type='checkbox' ";
@@ -34,7 +54,7 @@ function Todo(message, date, done, priority, id ) {
 				case 3: todo += "<span class='priority'><select><option value='1'>!</option><option value='2'>!!</option><option value='3' selected>!!!</option></select></span>"; break;
 		}
 		
-		if(date !== null) {
+		if(this.date !== null) {
 			todo += "<span class='duedate'><input type='date' value='"; 
 			todo += this.date.getFullYear() + "-";
 			if((this.date.getMonth() + 1) < 10) {
