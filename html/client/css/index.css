@@ -1,0 +1,44 @@
+#button{
+	display: block;
+	width: 280px;
+	height: 90px;
+	background: url(../img/buttonmain.png);
+	/*Postion Absolute Used*/
+	position:absolute;
+}
+/*hover and active used*/
+#button:hover{
+	background: url(../img/buttonmouseover.png);
+}
+#button:active{
+	background: url(../img/buttonmain.png);
+}
+/*Border requirement*/
+#side{
+-webkit-border-radius: 100px;
+-webkit-border-bottom-right-radius: 0;
+-moz-border-radius: 100px;
+-moz-border-radius-bottomright: 0;
+border-radius: 100px;
+border-bottom-right-radius: 0;
+}
+/* Margin requirement & Padding requirement */
+body{
+	background-color: #00000;
+	margin: auto;
+	padding: 100px;
+}
+img{
+	/*Position Relative Used*/
+	position:relative;
+}
+table{
+	width:100%
+}
+/* Requirements met for ::before and ::after usage */
+ul::before{
+	content: url(../img/checkmark.png);
+}
+h1::after{
+	content: 'PLANDO'
+}
