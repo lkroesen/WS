@@ -1,0 +1,99 @@
+body {
+	margin-left: auto;
+	margin-right: auto;
+	display:block;
+	min-width: 500px;
+	width:25%;
+	height:100%;
+	margin-bottom: 0;
+	margin-top: 0;
+	background-color: WhiteSmoke;
+	box-shadow: 0px 0px 20px #555555;
+	padding:10px;
+}
+
+html {
+	height:100%;
+}
+.todo {
+	display: block;
+	box-shadow: 0px 0px 5px #555555;
+	margin-bottom: 20px;
+	min-height:50px;
+	display: block;
+	width: 100%;
+	min-width: 200px;
+	padding:15px;
+}
+
+.todo:hover {
+	box-shadow: 0px 0px 10px #333555;
+}
+
+.overDue {
+	box-shadow: 0px 0px 20px 2px #e51616;
+	border-color: #e51616;
+	border-width: 2px;
+	border-style: solid;
+}
+
+.due {
+	box-shadow: 0px 0px 20px 2px #ffcf17;
+	border-color: #ffcf17;
+	border-width: 2px;
+	border-style: solid;
+}
+
+.done {
+	color:grey;
+	box-shadow: 0px 0px 110px 2px #70746e inset, 0px 0px 10px 2px #70746e;
+	text-decoration-line: line-through;
+	border-width: 2px;
+	border-style: solid;
+}
+
+#newToDo input[type=time],input[type=date] {
+	width:50%;
+}
+
+.todo .duedate {
+	display:block;
+}
+
+.todo .duedate input[type=time] {
+	width: 25%;
+}
+
+.todo .duedate input[type=date] {
+	width: 75%;
+}
+
+.priorityIndicator {
+	width:20px;
+	height:10%;
+	float:left;
+	margin-left: -15px;
+	margin-top: -15px;
+	margin-right:5px;
+}
+
+.priority1 .priorityIndicator {
+	background-color: #238341;
+	content:"!";
+}
+
+.priority2 .priorityIndicator {
+	background-color: #ffcf17;
+	content:"!!";
+}
+
+.priority3 .priorityIndicator {
+	background-color: #e51616;
+	content:"!!!";
+}
+
+#todos {
+	margin-left:-5%;
+	margin-right: 8%;
+	
+}

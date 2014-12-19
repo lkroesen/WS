@@ -1,3 +1,15 @@
+Date.prototype.sqlDateTime = function() {
+    var yyyy = this.getFullYear().toString();
+    var mm = (this.getMonth()+1).toString();
+    var dd  = this.getDate().toString();
+	var hh = this.getHours().toString();
+	var m = this.getMinutes().toString();
+	var ss = this.getSeconds().toString();
+	
+   return yyyy + "-" + (mm[1]?mm:"0"+mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]) + " " + (hh[1]?hh:"0"+hh[0]) + ":" + (m[1]?m:"0"+mm[0]) + ":" + (ss[1]?ss:"0"+ss[0]) ;
+  };
+
+
 var getToDoMessage = function() {
 	return $("#toDoMessage").val();
 }
@@ -40,10 +52,16 @@ var getArrayLocation= function(id) {
 
 var removeToDo = function(parent) {
 	console.log("Starting to remove");
-	$(parent).parent().off('blur');
-	var id = $(parent).parent().attr('data-todoid');
-
-	$(parent).parent().remove();
+	var toDoItem = getToDoElement(parent);
+	$(toDoItem).blur();
+	var id = $(toDoItem).attr('data-todoid');
+	$(toDoItem).animate({
+		left:-500,
+		opacity: 0
+	}, 500, function() {
+		$(toDoItem).remove();
+	});
+	
 	console.log(getArrayLocation(id));
 	todoList[getArrayLocation(id)].removeFromServer();
 	
@@ -61,22 +79,27 @@ var addToDo = function() {
 	
 	var priority = getPriority();	
 	if(message !== "") {
-		var todo = new Todo(message, date, false, priority, null);
-		var todoHTML = todo.toHTML();
+		$.get("/newid", function(response) {
+			var id = parseInt(response);
+			var todo = new Todo(message, date, false, priority, id);
+			var todoHTML = todo.toHTML();
+
+			todoList[todoList.length] = todo;
+
+			$("#todos ul").append(todoHTML);
+			$("#toDoMessage").val("");
+
+			if ( ($('.dateInput input[type=date]').val() !== "" ) || ( $('.dateInput input[type=time]').val() !== "") ) 
+				toggleDateEditor();
+			todoList[getArrayLocation(todo.id)].sendToServer();
+			
+		});
 		
-		todoList[todoList.length] = todo;
-		
-		$("#todos ul").append(todoHTML);
-		$("#toDoMessage").val("");
-		
-		if ( ($('.dateInput input[type=date]').val() !== "" ) || ( $('.dateInput input[type=time]').val() !== "") ) 
-			toggleDateEditor();
-		console.log(todoList);
-		todoList[getArrayLocation(todo.id)].sendToServer();
 	}
 	
 }
 
+//Toggles the date editor in a new to do.
 var toggleDateEditor = function() {
 	if($('.dateInput').is(':hidden')) {
 			$('.dateInput').show();
@@ -87,3 +110,37 @@ var toggleDateEditor = function() {
 		$('.dateInput input[type=time]').val("");
 	}
 }
+
+//This method gets the todos from the database.
+var getTodosFromServer = function(time) {
+	$.getJSON('/todos?time=' + time, function(response) {
+
+		for(var i = 0; i < response.length; i++) {
+			var todo = new Todo(response[i].Text, new Date(response[i].DueDate), response[i].Completed, response[i].Priority, response[i].Id, response[i].CompletionDate, response[i].ToDoListId);
+			
+			todoList.push(todo);
+
+			$('ul').append(todo.toHTML());
+		}
+		
+		console.log(todoList);
+	
+	});
+}
+
+var contains = function(other) {
+	for(var i = 0; todoList.length; i++) {
+		if(todoList[i].id == other.id) {
+			return true;
+		}
+	}
+	return false;
+}
+
+var getToDoElement = function(parent) {
+	if(!$(parent).hasClass("todo")) {
+		return getToDoElement($(parent).parent());
+	}
+	return parent;
+}
+

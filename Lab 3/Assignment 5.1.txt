@@ -65,4 +65,18 @@ WHERE Id = (
 
 7.
 
+/*SHOW ALL THE TODOLIST THAT CONTAIN TO DO ITES WITH THE TAG*/
+
+SELECT *
+FROM ToDoList
+WHERE Id IN (SELECT ToDoListId
+			FROM ToDoItem
+			WHERE Id IN ( 
+				SELECT ToDoId
+				FROM ItemTag
+				WHERE TagId = 2
+                	)
+		)
+                
+
             

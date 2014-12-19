@@ -1,0 +1,30 @@
+1.
+
+
+2. 
+
+
+3.
+
+SELECT ItemTag.TagId, ToDoItem.Text
+FROM ToDoItem INNER JOIN ItemTag ON ToDoItem.id = ItemTag.ToDoId
+ORDER BY DATEDIFF(ToDoItem.CreationDate, ToDoItem.CompletionDate) ASC
+LIMIT 10 
+
+4.
+
+
+5.
+
+SELECT AVG(ABS(DATEDIFF(ToDoItem.CompletionDate, ToDoItem.CreationDate)))
+FROM ToDoItem
+WHERE Completed = 1 AND ToDoListId = 1
+
+6. 
+
+SELECT *
+FROM ToDoItem AS Selector
+WHERE Selector.ToDoListID = 1 
+	AND ABS(DATEDIFF(Selector.CompletionDate, Selector.CreationDate)) > (
+									SELECT AVG(ABS(DATEDIFF(Seconder.CompletionDate, Seconder.CreationDate)))
+                                    FROM ToDoItem AS Seconder )

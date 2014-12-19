@@ -4,47 +4,16 @@ var todoList = [];
 
 var dueDateSelector = "<span class='dateInput'><input type='date' /><input type='time' /></span>"
 
+
 $(document).ready(function () {
 
 	$('.dateInput').hide();
 	
-	$.getJSON('/todos', function(response) {
-		
-		console.log(response);
-		
-		for(var i = 0; i < response.length; i++) {
-			console.log("Response: " + response);
-			var todo = new Todo(response[i].Text, new Date(response[i].DueDate), response[i].Completed, response[i].Priority);
-			todoList[i] = todo;
-			$('ul').find('li:not(#newToDo)').remove();
-			$('ul').append(todo.toHTML());
-		}
-	});
+	getTodosFromServer("first");
 	
 	setInterval(function () {
-    	console.log("Fetching the todo list from the server.");
-    	$.getJSON("/todos", function(response) {
-			console.log("Not Entered loop");
-			for(var i = 0; i<response.length; i++) {
-				console.log("Entered loop");
-				
-				if(response[i].DueDate !== null) {
-					var datest = JSON.parse(response[i].DueDate);
-					var date = new Date(datest);
-				} else {
-					var date = null;
-				}
-				console.log(date);
-				var todo = new Todo(response[i].message, date, response[i].done, response[i].priority, response[i].id);	
-				
-				if( !($.inArray(todo, todoList)) ) {
-					
-					$('ul').append(todo.toHTML());
-					
-					todoList.push(todo);
-				}
-			}
-		});
+		console.log("Fetching the todo list from the server.");
+    	getTodosFromServer();
     }, 2000);
 	
 
@@ -69,7 +38,6 @@ $(document).ready(function () {
 	
 	//This method removes a to do.
 	$('ul').on('click', 'li button.delete', function() {
-		
 		console.log("Remove button clicked.");
 
 		//Er moet twee keer geklikt worden om het item echt te verwijderen.
@@ -89,17 +57,14 @@ $(document).ready(function () {
 	//This method handles the checkbox behaviour.
 	$('ul').on('change', 'li input[type=checkbox]', function() {
 		console.log("checkbox clicked");
+		var todoElement = getToDoElement(this);
 		if($(this).is(':checked')) {
-			console.log("check");
-			$(this).parent().css('text-decoration','line-through');
-			$(this).parent().css('color','grey');
-			var id = $(this).parent().attr('data-todoid');
+			$(todoElement).addClass('done');
+			var id = $(todoElement).attr('data-todoid');
 			todoList[getArrayLocation(id)].done = true;
 		} else {
-			$(this).parent().css('text-decoration','none');
-			$(this).parent().css('color','black');
-			console.log("uncheck");
-			var id = $(this).parent().attr('data-todoid');
+			$(todoElement).removeClass('done');
+			var id = $(todoElement).attr('data-todoid');
 			todoList[getArrayLocation(id)].done = false;
 		}
 	});
@@ -108,7 +73,7 @@ $(document).ready(function () {
 	$('ul').on('keypress', '.todo span', function(key) {
 		if(key.which === 13) {
 			console.log("BLUR IT!");
-			$(this).parent().blur();
+			$(this).blur();
 			return false;
 		}
 	});
