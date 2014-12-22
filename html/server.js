@@ -1,10 +1,17 @@
+var defaultPort = 3000;
 var express = require('express');
 var http = require('http');
 var url = require('url');
 var app;
 var highestQueryID = "SELECT id FROM ToDoItem ORDER BY id DESC LIMIT 1";
-var port = process.argv[2];
+
 app = express();
+
+var port = process.argv[2];
+if(port == undefined) {
+	port = defaultPort;
+	console.log("No port defined. Default port: " + defaultPort);
+}
 
 var compareToSent = function(rows) {
 	var newTodo = [];
