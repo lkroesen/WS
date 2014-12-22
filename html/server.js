@@ -3,7 +3,7 @@ var http = require('http');
 var url = require('url');
 var app;
 var highestQueryID = "SELECT id FROM ToDoItem ORDER BY id DESC LIMIT 1";
-
+var port = process.argv[2];
 app = express();
 
 var compareToSent = function(rows) {
@@ -167,8 +167,8 @@ app.get("/stats/total", function(req, res) {
 	});
 });
 
-console.log("Server listening on port 3000");
-http.createServer(app).listen(3000);
+console.log("Server listening on port " + port);
+http.createServer(app).listen(port);
 
 var getArrayLocation= function(id) {
 	for(var x = 0; x < sentTodos.length; x++) {

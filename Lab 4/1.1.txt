@@ -1,8 +1,14 @@
 1.
-
+SELECT Tag.Id, COUNT(*)
+FROM Tag INNER JOIN TagItem ON Tag.Id = ItemTag.TagId INNER JOIN ToDoItem ON ItemTag.ToDoId = ToDoItem.Id
+WHERE ToDoItem.Completed = 1
+GROUP BY Tag.Id
 
 2. 
-
+SELECT WEEK(CompletionDate) AS y, COUNT(*)
+FROM ToDoItem
+WHERE Completed = 1 
+GROUP BY y
 
 3.
 
