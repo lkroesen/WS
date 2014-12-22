@@ -11,6 +11,7 @@ var port = process.argv[2];
 if(port == undefined) {
 	port = defaultPort;
 	console.log("No port defined. Default port: " + defaultPort);
+
 }
 
 var compareToSent = function(rows) {
