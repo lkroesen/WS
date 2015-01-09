@@ -1,71 +1,81 @@
 "use strict";
 
-var todoList = [];
-
-var dueDateSelector = "<span class='dateInput'><input type='date' /><input type='time' /></span>"
-
+var todoLists = [];
 
 $(document).ready(function () {
-
-	$('.dateInput').hide();
 	
 	getTodosFromServer("first");
 	
 	setInterval(function () {
-		console.log("Fetching the todo list from the server.");
     	getTodosFromServer();
     }, 2000);
 	
 
-	
-	
 	//This method checks if the enterkey is pressed to add a to do to the list.
-	$('#newToDo form').on('keypress', function (key) {
+	$('#todolists').on('keypress', '.newToDo .toDoMessage', function (key) {
 		//Check if enter was pressed. If so, continue.
 		if (key.which === 13) {
-			addToDo();
+			addToDo(this);
 			console.log("Enter pressed");
 			return false;
 		}
 	});
 	
 	//This method checks if the + button is pressed to add a to do to the list.
-	$('#addButton').on('click', function() {
-		addToDo();
-		console.log("Pressed the + button");
+	$('#todolists').on('click', '.addButton', function() {
+		addToDo(this);
+		console.log("Pressed the add to do button");
 		return false;
 	});
 	
-	//This method removes a to do.
-	$('ul').on('click', 'li button.delete', function() {
-		console.log("Remove button clicked.");
-
-		//Er moet twee keer geklikt worden om het item echt te verwijderen.
-		if($(this).text() === "||") {
-			$(this).text("X")
-			$(this).focusin();
-		} else if($(this).text() === "X") {
-			removeToDo(this);
+	$('#todolists').on('keypress', '.todolist h1', function(key) {
+		if(key.which === 13) {
+			$(this).blur();
+			return false;
 		}
-		
-		//Als de gebruiker ergens anders klikt verandert de knop weer terug.
-		$('ul').on('blur', 'li button.delete', function() {
-			$(this).text("||");
-		});
 	});
 	
+	$("#newlist").on('click', function() {
+		console.log("Pressed the add list button");
+		addNewList();
+	});
+	
+	//This method removes a to do.
+	$('#todolists').on('click', 'ul li.todo button.delete', function() {
+		console.log("Remove button clicked.");
+		
+		//Er moet twee keer geklikt worden om het item echt te verwijderen.
+		if($(this).text() == "||") {
+			$(this).text("X");
+			console.log(this);
+			$(this).focus();
+		} else if($(this).text() == "X") {
+			removeToDo(this);
+		}
+	});
+
+	//Als de gebruiker ergens anders klikt verandert de knop weer terug.
+	$('#todolists').on('blur', 'ul li.todo button.delete', function() {
+		console.log("Lost focus on button delete");
+		$(this).text('||');
+	});
+
+	
+	
 	//This method handles the checkbox behaviour.
-	$('ul').on('change', 'li input[type=checkbox]', function() {
+	$('ul').on('change', '.todo input[type=checkbox]', function() {
 		console.log("checkbox clicked");
-		var todoElement = getToDoElement(this);
+		var todoElement = $(this).parents('.todo');
+		var list = $(this).find('.todolist');
 		if($(this).is(':checked')) {
 			$(todoElement).addClass('done');
 			var id = $(todoElement).attr('data-todoid');
-			todoList[getArrayLocation(id)].done = true;
+			var listId = $(list).attr('data-listid');
+			//todoLists[getArrayLocation(listId)] = true; ATTENTION
 		} else {
 			$(todoElement).removeClass('done');
 			var id = $(todoElement).attr('data-todoid');
-			todoList[getArrayLocation(id)].done = false;
+			todoLists[getArrayLocation(id)].done = false;
 		}
 	});
 		
@@ -80,27 +90,8 @@ $(document).ready(function () {
 	
 	//This method updates the to do on blur.
 	$('ul').on('blur', 'li:not(#newToDo)', function() {
-		var message = $(this).find('.message').text();
-		var done = $(this).find('input[type=checkbox]').is(':checked')
-		var priority = $(this).find('.priority select').val();
-		
-		var dateString = $(this).find('.duedate input[type="date"]').val();
-		var time = $(this).find('.duedate input[type=time]').val();
-		var date = getToDoDueDate(dateString, time);
-		var id = $(this).attr('data-todoid');
-		
-		var location = getArrayLocation(id);
-		todoList[location].message = message;
-		todoList[location].date = date;
-		todoList[location].priority = priority;
-		todoList[location].done = done;
-		console.log("Changed the todo");
-		todoList[location].sendToServer();
-	});
-	
-	//This method listens if the button to add a date is clicked.
-	$('#newToDo #addDate').on('click', function() {
-		toggleDateEditor();
+		console.log("Lost focus on " + this);
+		updateToDo(this);
 	});
 	
 	/////////////////////////////////////////////////////
@@ -112,19 +103,19 @@ $(document).ready(function () {
 		var sort = $(this).attr('data-sort');
 		if(sort == 'down') {
 			$(this).attr('data-sort', 'up');
-			todoList.sort(function(a, b) {
+			todoLists.sort(function(a, b) {
 				return a.date - b.date;
 			});
 		} else if(sort == 'up') {
 			$(this).attr('data-sort', 'down');
-			todoList.sort(function(a,b) {
+			todoLists.sort(function(a,b) {
 				return b.date - a.date;
 			});
 		}
 		
 		$('ul').find('li:not(#newToDo)').remove();
-		for(var i=0; i < todoList.length; i++) {
-			$('ul').append(todoList[i].toHTML());
+		for(var i=0; i < todoLists.length; i++) {
+			$('ul').append(todoLists[i].toHTML());
 		}
 	});
 	
@@ -132,19 +123,19 @@ $(document).ready(function () {
 		var sort = $(this).attr('data-sort');
 		if(sort == 'down') {
 			$(this).attr('data-sort', 'up');
-			todoList.sort(function(a,b) {
+			todoLists.sort(function(a,b) {
 				return a.priority - b.priority;
 			});
 		} else if(sort == 'up') {
 			$(this).attr('data-sort', 'down');
-			todoList.sort(function(a, b) {
+			todoLists.sort(function(a, b) {
 				return b.priority - a.priority;
 			});
 		}
 		
 		$('ul').find('li:not(#newToDo)').remove();
-		for(var i=0; i < todoList.length; i++) {
-			$('ul').append(todoList[i].toHTML());
+		for(var i=0; i < todoLists.length; i++) {
+			$('ul').append(todoLists[i].toHTML());
 		}
 	});
 	
@@ -152,19 +143,19 @@ $(document).ready(function () {
 		var sort = $(this).attr('data-sort');
 		if(sort == 'down') {
 			$(this).attr('data-sort', 'up');
-			todoList.sort(function(a,b) {
+			todoLists.sort(function(a,b) {
 				return a.done - b.done;
 			});
 		} else if(sort == 'up') {
 			$(this).attr('data-sort', 'down');
-			todoList.sort(function(a, b) {
+			todoLists.sort(function(a, b) {
 				return b.done - a.done;
 			});
 		}
 		
 		$('ul').find('li:not(#newToDo)').remove();
-		for(var i=0; i < todoList.length; i++) {
-			$('ul').append(todoList[i].toHTML());
+		for(var i=0; i < todoLists.length; i++) {
+			$('ul').append(todoLists[i].toHTML());
 		}
 	});
 		

@@ -1,0 +1,89 @@
+@media print {
+    nav ul, nav a {
+        visibility: hidden;
+    }
+
+    body {
+        background:none;
+    }
+
+    * {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    }
+
+    #content {
+        width:100%;
+    }
+
+    #logo {
+        color: #000000;
+    }
+
+    #menu {
+        background-color: transparent;
+    }
+
+    h1 {
+        color:#444444;
+        margin:10px;
+        width:1000px;
+    }
+
+    .sortButtons {
+        visibility: hidden;
+    }
+
+    .newToDo {
+        visibility: hidden;
+    }
+
+    .todolist {
+        background: #ffffff;
+        border:solid;
+        border-width: 3px;
+        border-color:#444444;
+    }
+
+    .listItemsContainer {
+        margin-top:-120px;
+    }
+
+    .listContainer {
+        height:95%;
+        display: block;
+        width:1000px;
+        max-width:none;
+    }
+
+    .todo {
+        max-width:450px;
+        display:inline-block;
+        margin:10px;
+    }
+
+    .priorityIndicator div div  {
+        background-color: #000000;
+    }
+
+    .buttons {
+        visibility: hidden;
+    }
+
+    .overDue {
+        -webkit-box-shadow: 0px 0px 20px 2px #444444;
+        -moz-box-shadow: 0px 0px 20px 2px #444444;
+        box-shadow: 0px 0px 20px 2px #444444;
+        border-color:#000000;
+    }
+
+    .due {
+        -webkit-box-shadow: 0px 0px 20px 2px #444444;
+        -moz-box-shadow: 0px 0px 20px 2px #444444;
+        box-shadow: 0px 0px 20px 2px #444444;
+        border-color:#000000;
+    }
+
+
+}

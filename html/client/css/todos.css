@@ -1,43 +1,158 @@
 body {
-	margin-left: auto;
-	margin-right: auto;
-	display:block;
-	min-width: 500px;
-	width:25%;
-	height:100%;
 	margin-bottom: 0;
 	margin-top: 0;
+	margin-left: 0px;
+	margin-right: 0px;
+	background-image: url("http://upload.wikimedia.org/wikipedia/commons/a/af/Flickr_-_…trialsanderrors_-_River_valley,_Montenegro,_ca._1895.jpg");
+	background-attachment: fixed;
+	overflow-y:hidden;
+	background-size: 100%;
+	background-repeat: no-repeat;
 	background-color: WhiteSmoke;
+	background-size: cover;
+	font: 15px arial;
+	height: 100%;
+}
+
+#menu {
+	width:100%;
+	height:50px;
+	background-color: rgba(0,0,0,0.7);
+	margin-top:0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding: 0px;
+	padding-right: 50px;
+	position: fixed;
+	z-index: 5;
+}
+
+#menu li {
+	display:inline-block;
+	width:80px;
+	font: 20px arial;
+	margin-top:auto;
+	margin-bottom: auto;
+}
+
+#menu li a {
+	color:#fff;
+	text-decoration: none;
+}
+
+#menu ul {
+	width:40%;
+	margin-left: auto;
+	margin-right: auto;
+	display: inline-block;
+	margin-top:-15px;
+}
+
+#newlist {
+	display: inline-block;
+	margin-right: 10px;
+	float:right;
+	font: 45px arial;
+	text-decoration: none;
+	color:#fff;
+}
+
+#logo {
+	font: 45px arial;
+	color:white;
+	margin-left: 15px;
+	display: inline-block;
+}
+
+
+
+h1 {
+	font: 30px arial;
+	margin-top: 0px;
+	margin-bottom: 5px;
+	color:#fff;
+}
+
+#content {
+	width:100%;
+	padding-top:60px;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+#todolists {
+	position: relative;
+	width:100%;
+	height:calc(100% - 110px);
+}
+
+.listContainer {
+	display:inline-block;
+	margin-right:20px;
+	margin-top:-60px;
+	position: relative;
+	
+	min-width: 400px;
+	width:30%;
+	max-width: 500px;
+	height:100%;
+	padding-bottom: 50px;
+	padding-top:60px;
+	overflow-y:scroll;
+}
+
+.todolist {
+	background-color: rgba(0, 0, 0, 0.55);
+	border-radius: 5px;
 	box-shadow: 0px 0px 20px #555555;
 	-webkit-box-shadow: 0px 0px 20px #555555;
 	padding:10px;
+	box-sizing: border-box;
+	width:100%;
+}
+
+.todolist ul {
+	width:100%;
+	margin:0px;
 }
 
 html {
 	height:100%;
 }
+
 .todo {
 	display: block;
+	background-color: WhiteSmoke;
+	border-radius: 1px;
 	box-shadow: 0px 0px 5px #555555;
 	-webkit-box-shadow: 0px 0px 5px #555555;
-	margin-bottom: 20px;
+	-o-box-shadow: 0px 0px 5px #555555;
+	-moz-box-shadow: 0px 0px 5px #555555;
+	margin-top: 20px;
 	min-height:50px;
 	display: block;
 	width: 100%;
+	box-sizing: border-box;
 	min-width: 200px;
 	padding:15px;
+	overflow-y: hidden;
+}
+
+.todolist .todo:first-child {
+	margin-top:5px;
 }
 
 .todo:hover {
-	box-shadow: 0px 0px 10px #333555;
-	-webkit-box-shadow: 0px 0px 10px #333555;
+	box-shadow: 0px 0px 10px #fff;
+	-webkit-box-shadow: 0px 0px 10px #fff;
 }
 
 .overDue {
 	box-shadow: 0px 0px 20px 2px #e51616;
 	-webkit-box-shadow: 0px 0px 20px 2px #e51616;
 	border-color: #e51616;
-	border-width: 2px;
+	border-width: 1px;
 	border-style: solid;
 }
 
@@ -45,16 +160,16 @@ html {
 	box-shadow: 0px 0px 20px 2px #ffcf17;
 	-webkit-box-shadow: 0px 0px 20px 2px #ffcf17;
 	border-color: #ffcf17;
-	border-width: 2px;
+	border-width: 1px;
 	border-style: solid;
 }
 
 .done {
 	color:grey;
-	box-shadow: 0px 0px 110px 2px #70746e inset, 0px 0px 10px 2px #70746e;
-	-webkit-box-shadow: 0px 0px 110px 2px #70746e inset, 0px 0px 10px 2px #70746e;
+	box-shadow: 0px 0px 10px 2px #70746e;
+	-webkit-box-shadow: 0px 0px 10px 2px #70746e;
 	text-decoration-line: line-through;
-	border-width: 2px;
+	border-width: 1px;
 	border-style: solid;
 }
 
@@ -66,41 +181,60 @@ html {
 	display:block;
 }
 
-.todo .duedate input[type=time] {
-	width: 25%;
+.dateInput {
+	margin: 5px;
 }
 
-.todo .duedate input[type=date] {
-	width: 75%;
+.todo .duedate {
+	margin-top: 5px;
 }
 
 .priorityIndicator {
 	width:20px;
-	height:100%;
-	/*float:left;*/
+	height:50px;
 	position:absolute;
 	margin-left: -15px;
-	margin-top: -15px;
+	margin-top: auto;
+	margin-bottom: auto;
 	margin-right:5px;
+	box-sizing: border-box;
+	padding:0px;
 }
 
-.priority1 .priorityIndicator {
-	background-color: #238341;
-	content:"!";
+.priorityIndicator div div {
+	border-radius: 5px;
+	height:10px;
+	width:10px;
+	margin:auto;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	background-color: blue;
+}
+/*FIX THE INDICATORS*/
+.priority1 .priorityIndicator div div:nth-child(odd) {
+	visibility: hidden;
 }
 
-.priority2 .priorityIndicator {
-	background-color: #ffcf17;
-	content:"!!";
+.priority2 .priorityIndicator div:nth-child(even) {
+	visibility: hidden;
 }
 
-.priority3 .priorityIndicator {
-	background-color: #e51616;
-	content:"!!!";
+.todo div.content {
+	margin-left:10px;
+	width:98%;
 }
 
-#todos {
-	margin-left:-5%;
-	margin-right: 8%;
+.todolist ul {
+	display:inline-block;
+	padding-start:0px;
+	margin-after:0px;	
 	
+	-webkit-padding-start:0px;
+	-webkit-margin-after:0px;	
+	
+	-moz-padding-start:0px;
+	-moz-margin-after:0px;	
+	
+	-o-padding-start:0px;
+	-o-margin-after:0px;	
 }

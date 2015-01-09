@@ -3,7 +3,6 @@
 	width: 280px;
 	height: 90px;
 	background: url(../img/buttonmain.png);
-	/*Postion Absolute Used*/
 	position:absolute;
 }
 /*hover and active used*/
@@ -43,7 +42,89 @@ table{
 /* Requirements met for ::before and ::after usage */
 ul::before{
 	content: url(../img/checkmark.png);
+	-webkit-animation: glow 5s;
 }
+
+ul {
+	-webkit-animation: glow 2s infinite;
+	animation: glowP 2s infinite;
+}
+
+@-webkit-keyframes glow {
+	from {
+		text-shadow:0px 0px;
+	}
+	50% {
+		text-shadow: 0px 0px 10px #00ff2b;
+	}
+	to {
+		text-shadow:0px 0px;
+	}
+}
+
+@keyframes glowP {
+from {
+		text-shadow:0px 0px;
+	}
+	50% {
+		text-shadow: 0px 0px 10px #00ff2b;
+	}
+	to {
+		text-shadow:0px 0px;
+	}
+}
+
 h1::after{
 	content: 'PLANDO'
 }
+
+header {
+	margin-left: auto;
+	margin-right: auto;
+	width:60%;
+	max-height:200px;
+	height:200px;
+}
+
+header img {
+	animation: highlightSteps 2s infinite;
+	-webkit-animation: highlightSteps 2s infinite;
+}
+
+header img:last-child {
+	margin-right: 0px;
+}
+
+@keyframes highlightSteps {
+	from {
+		width: 128px;
+		height: 128px;
+
+	}
+	50% {
+		width: 150px;
+		height: 150px;
+		transform:rotate(360deg);
+	}
+	to {
+		width: 128px;
+		height: 128px;
+	}
+}
+
+@-webkit-keyframes highlightSteps {
+	 from {
+		 width: 128px;
+		 height: 128px;
+	 }
+	 50% {
+		 width: 150px;
+		 height: 150px;
+		 transform:rotate(360deg);
+	 }
+	 to {
+		 width: 128px;
+		 height: 128px;
+	 }
+ }
+	
