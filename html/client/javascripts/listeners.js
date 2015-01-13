@@ -3,13 +3,34 @@
 var todoLists = [];
 
 $(document).ready(function () {
-	
-	getTodosFromServer("first");
-	
-	setInterval(function () {
-    	getTodosFromServer();
-    }, 2000);
-	
+
+	if($.cookie('background_cookie')) {
+		var url = $.cookie('background_cookie');
+		setBackground(url);
+	}
+
+	$('#preferences').hide();
+
+	$('#backgroundURL input').on('blur', function() {
+		var url = $(this).val();
+		setBackground(url);
+	});
+
+	$('#defaultBackground button').on('click', function()  {
+		setBackground("default");
+	});
+
+	setInterval(function() {
+		var todos = $('.todo:not(.newToDo)');
+		for(var i = 0; i < todos.length; i++) {
+			evaluateToDo(todos[i]);
+		}
+	}, 30000);
+
+	$('#preferencesB').on('click', function() {
+		$('#preferences').toggle();
+		return false;
+	});
 
 	//This method checks if the enterkey is pressed to add a to do to the list.
 	$('#todolists').on('keypress', '.newToDo .toDoMessage', function (key) {
@@ -31,10 +52,13 @@ $(document).ready(function () {
 	$('#todolists').on('keypress', '.todolist h1', function(key) {
 		if(key.which === 13) {
 			$(this).blur();
+			console.log("Updating list name");
+			updateList($(this).parents('.todolist'));
 			return false;
 		}
 	});
-	
+
+	//This method listens if the button to add a new list is clicked.
 	$("#newlist").on('click', function() {
 		console.log("Pressed the add list button");
 		addNewList();
@@ -59,24 +83,12 @@ $(document).ready(function () {
 		console.log("Lost focus on button delete");
 		$(this).text('||');
 	});
-
-	
 	
 	//This method handles the checkbox behaviour.
-	$('ul').on('change', '.todo input[type=checkbox]', function() {
+	$('ul').on('change', '.todo:not(#newToDo) input[type=checkbox]', function() {
 		console.log("checkbox clicked");
 		var todoElement = $(this).parents('.todo');
-		var list = $(this).find('.todolist');
-		if($(this).is(':checked')) {
-			$(todoElement).addClass('done');
-			var id = $(todoElement).attr('data-todoid');
-			var listId = $(list).attr('data-listid');
-			//todoLists[getArrayLocation(listId)] = true; ATTENTION
-		} else {
-			$(todoElement).removeClass('done');
-			var id = $(todoElement).attr('data-todoid');
-			todoLists[getArrayLocation(id)].done = false;
-		}
+		updateToDo(todoElement);
 	});
 		
 	//This methode listens if the enter key is pressed when a to do is edited.
@@ -84,13 +96,15 @@ $(document).ready(function () {
 		if(key.which === 13) {
 			console.log("BLUR IT!");
 			$(this).blur();
+			updateToDo($(this).parents('.todo'));
 			return false;
 		}
 	});
 	
 	//This method updates the to do on blur.
-	$('ul').on('blur', 'li:not(#newToDo)', function() {
-		console.log("Lost focus on " + this);
+	$('#todolists').on('blur', 'li:not(#newToDo)', function() {
+		console.log("Lost focus on ");
+		console.log($(this));
 		updateToDo(this);
 	});
 	

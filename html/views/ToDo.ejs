@@ -1,0 +1,58 @@
+<%  var classes = "";
+    classes += (todo.getDone()?'done ':'');
+    classes += (todo.isOverDue()?'overDue ':'');
+    classes += (todo.isDue()?'due ':'');
+    classes += (todo.isVeryDue()?'veryDue ':'');
+    switch(todo.getPriority()) {
+    case 1: classes += 'priority1 '; break;
+    case 2: classes += 'priority2 '; break;
+    case 3: classes += 'priority3 '; break;
+    } %>
+<li data-todoid="<%= todo.getId() %>" data-duedate="<%= todo.getDueDate() %>" class="todo <%= classes %>" draggable="true">
+    <div>
+        <div class="priorityIndicator"><div><div></div><div></div><div></div></div></div>
+        <div class="content">
+            <input type="checkbox" <%= todo.done?'checked':''%> />
+            <span contenteditable="true" class="message"><%= todo.message %></span>
+            <span class="buttons">
+                <button class="delete">||</button>
+                <span class="priority">
+                    <select>
+                        <%  var text = "";
+                        for(var i = 1; i < 4; i++ ) {
+                            text += "!" %>
+                        <option value="<%= i %>" <%= (todo.getPriority() == i?'selected':'')%>><%= text %></option>
+                        <% } %>
+                    </select>
+                </span>
+            </span>
+            <span class="duedate">
+                <select class="day">
+                    <% for(var i = 1; i < 32; i++) { %>
+                    <option value="<%= i %>"<%= (todo.getDueDate().getDate() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                    <% } %>
+                </select>
+                <select class="month">
+                    <% for(var i = 1; i < 13; i++) { %>
+                    <option value="<%= i %>"<%= (todo.getDueDate().getMonth() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                    <% } %>
+                </select>
+                <select class="year">
+                    <% for(var i = 2014; i < 2021; i++) { %>
+                    <option value="<%= i %>"<%= (todo.getDueDate().getFullYear() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                    <% } %>
+                </select>
+                <select class="hours">
+                    <% for(var i = 0; i < 24; i++) { %>
+                    <option value="<%= i %>"<%= (todo.getDueDate().getHours() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                    <% } %>
+                </select>
+                <select class="minutes">
+                    <% for(var i = 0; i < 60; i++) { %>
+                    <option value="<%= i %>"<%= (todo.getDueDate().getMinutes() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                    <% } %>
+                </select>
+            </span>
+        </div>
+    </div>
+</li>

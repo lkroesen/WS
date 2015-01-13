@@ -1,43 +1,83 @@
 var defaultPort = 3000;
+var credentials = require('./javascripts/credentials.js');
+var User = require('./javascripts/user.js');
+var Todo = require('./javascripts/todo.js').Todo;
+var ToDoList = require('./javascripts/todolist.js').ToDoList;
+require('./client/javascripts/prototypeFunctions.js');
+
 var express = require('express');
+var cookies = require('cookie-parser');
 var http = require('http');
 var url = require('url');
 var ejs = require('ejs');
-var ToDoList = require('./client/javascripts/todolist.js').ToDoList;
-var Todo = require('./client/javascripts/todo.js').Todo;
-require('./client/javascripts/prototypeFunctions.js');
 var mysql = require('mysql');
 var $ = require('jquery');
+var session = require('express-session');
+var passport = require('passport');
+var TwitterStrategy = require('passport-twitter').Strategy;
+var validator = require('validator');
+
 var app = express();
 
-var highestQueryID = "SELECT id FROM ToDoItem ORDER BY id DESC LIMIT 1";
-
 var port = process.argv[2];
-if(port == undefined) {
+if(!port) {
 	port = defaultPort;
 	console.log("No port defined. Default port: " + defaultPort);
 }
 
-var todoLists = [];
- 
+var newToDoId = 0;
+var newListId = 0;
+var requests = 0;
+
+
 app.use(express.static(__dirname + "/client"));
+app.use(cookies(credentials.cookies.secret));
+app.use(session(credentials.cookies.secret));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.set('view engine', 'ejs');
 
-var db = mysql.createConnection({
-	host:	'localhost',
-	user:	'root',
-password:	'',
-database:	'todo'
+passport.use(new TwitterStrategy({
+	consumerKey: credentials.twitter.CONSUMER_KEY,
+	consumerSecret: credentials.twitter.CONSUMER_SECRET_KEY,
+	callbackURL: "http://127.0.0.1:4000/todo.html"
+}, function(token, tokenSecret, profile, done) {
+	User.findOrCreate(profile, function(err, user) {
+		if(err) {return done(err);}
+		done(null, user);
+	}, db);
+
+}));
+
+passport.serializeUser(function(user, done) {
+	done(null, user.getId());
 });
 
-var updateQuery = "SELECT ToDoItem.Id AS ToDoId, ToDoItem.Text AS Message, ToDoItem.CreationDate, ToDoItem.DueDate, ToDoItem.Completed, ToDoItem.CompletionDate, ToDoItem.Priority, ToDoItem.ToDoListId AS ListId, ToDoList.Name AS ListName, ToDoList.CreationDate, ToDoList.Owner AS User FROM ToDoItem INNER JOIN ToDoList ON ToDoListID = ToDoList.Id WHERE ToDoList.Owner = 2 ORDER BY ToDoItem.DueDate ASC";
-var serverUpdate = function() {
-	console.log("Checking database for new to do's");
+passport.deserializeUser(function(userId, done) {
+	User.deserializeUser(userId, db, function(err, user) {
+		done(err, user);
+	});
+});
+
+var db = mysql.createConnection(credentials.database);
+
+
+var getDataFromDatabase = function(userId, callback) {
+	console.log("Getting todos from database");
+
+	var updateQueryTemplate = "SELECT * FROM MostDueTodos WHERE User=<%= userId %>";
+	var updateQuery = ejs.render(updateQueryTemplate, {'userId':userId});
+
+	var todoLists = [];
 	db.query(updateQuery, function(err, rows, fields) {
 		if(err) {
 			console.log(err);
 		}
 		if(rows) {
+			console.log("Todos for user" + userId);
+			console.log(rows);
 			for(var i = 0; i < rows.length; i++) {
 				var list  = todoLists.findById(rows[i].ListId);
 				if(!list) {
@@ -51,9 +91,13 @@ var serverUpdate = function() {
 					list.addToDo(todo);
 				}
 			}
+			callback(todoLists);
+			return todoLists;
 		}
 	});
-}
+
+
+};
 
 //Makes the connection with the db.
 db.connect(function(err){
@@ -62,27 +106,43 @@ db.connect(function(err){
 		process.exit(1);
 	} else {
 		console.log("DB CONNECTION ACTIVE");
+		console.log("Ready!");
 	}
 });
+
+var highestIds = function() {
+	db.query('SELECT Id FROM ToDoItem ORDER BY Id DESC LIMIT 1', function(err, rows, fields) {
+		if(err) {console.log(err);}
+		if(rows) {
+			newToDoId = rows[0].Id + 1;
+		}
+	});
+
+	db.query('SELECT Id FROM ToDoList ORDER BY Id DESC LIMIT 1', function(err, rows, fields) {
+		if(err) {console.log(err);}
+		if(rows) {
+			newListId = rows[0].Id + 1;
+		}
+	});
+}
 
 
 //This function checks every 1 second with the database if there are new todos.
 setInterval(function() {
-	serverUpdate();
-}, 1000);
+	highestIds();
+}, 500);
 
-app.get("/todo.html", function(req, res) {
-
-	console.log("Sending to do page.");
-	res.render('todo.ejs', {'todoLists':todoLists});
-
-	for(var i = 0; i < todoLists.length; i++) {
-		for(var j = 0; j < todoLists[i].getTodos().length; j++) {
-			todoLists[i].getTodos()[j].new = false;
-		}
-		todoLists[i].new = false;
+app.get("/todo.html", passport.authenticate('twitter'), function(req, res) {
+	if(req.user) {
+		var user = req.user;
+		requests++;
+		console.log("Request number: #" + requests);
+		getDataFromDatabase(user.id, function(todoLists) {
+			res.render('todoPage.ejs', {'todoLists':todoLists, 'user':user, 'url':'/todo.html'});
+		});
+	} else {
+		res.redirect('/auth/twitter');
 	}
-
 });
 
 //Sends the index page.
@@ -90,94 +150,78 @@ app.get("/", function(req, res) {
 	res.send("index.html");
 });
 
-app.get("/lists", function(req, res) {
-	var toSend = [];
-	for(var i = 0; i < todoLists.length; i++) {
-		if(todoLists[i].new) {
-			toSend.push(todoLists[i]);
-			todoLists[i].new = false;
-		}
-	}
-
-	if(toSend.isEmpty) {
-		console.log("No new todo lists to send to user");
-	} else {
-		console.log("Sending new todo lists to user");
-	}
-
-	res.send(toSend);
-});
-
-//This function sends the new todos to the user that requests them.
-app.get("/todos", function(req, res) {
-	var toSend = [];
-	for(var i = 0; i < todoLists; i++) {
-		for(var j = 0; j< todoLists[i].todos.length; j++) {
-			if(todoLists[i].todos[j].new) {
-				toSend.push(todoLists[i].todos[j]);
-				todoLists[i].todos[j].new = false;
-			}
-		}
-	}
-
-	if(toSend.isEmpty) {
-		console.log("No new todos to send to user.");
-	} else {
-		console.log("Sending new todos to user.");
-	}
-	res.send(toSend);
-});
-
 
 //This function lets the user add a todos to the database.
 app.get("/addtodo", function(req, res) {
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	db.query(highestQueryID, function(err, rows, fields){
-		if(query['data'] !== undefined) {
-			var todo = JSON.parse(query['data']);
-			var location = getArrayLocation(todo.id);
-			if(location == -1) {
-				sentTodos[sentTodos.length] = todo;	
-				var err = addToDoToDB(todo);
-			}	
-			if(err) {
-				res.send(err);
-			} else {
-				res.sendStatus(200);
+	if(query['data']) {
+		var data = JSON.parse(query['data']);
+		var todo = new Todo(newToDoId, data.message, new Date(data.date),false, data.priority, data.toDoListId, new Date());
+		highestIds();
+		db.query(todo.insertData(), function(err, rows, fields) {
+			if(err) {res.sendStatus(500); console.log(err);}
+			else{
+				res.render('ToDo.ejs', {'todo':todo});
+				console.log("New to do added! " + todo.getId() + ", " + todo.getMessage());
 			}
-		}
-	});
-	
+		});
+	}
 });
 
 //This function updates the todo in the database and in the array.
 app.get("/updatetodo", function(req, res) {
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	if(query['data'] !== undefined) {
-		var todo = JSON.parse(query['data']);
-		console.log("\n User has updated todo " + todo.id + "\n");
-		
-		var location = getArrayLocation(todo.id);
-		if(location != -1) {
-			sentTodos[location] = todo;
-			var err = updateToDoDB(todo);
-			res.send(err);
-		}
+	if(query['data']) {
+		var data = JSON.parse(query['data']);
+		var todo = new Todo(data.toDoId, data.message, new Date(data.date),data.done, data.priority, data.toDoListId);
+
+		db.query(todo.updateData(), function(err, rows, fields) {
+			if(err) {res.sendStatus(500); console.log(err);}
+			else{
+				console.log("  To do updated: " + todo.getId() + ", " + todo.getMessage());
+				res.sendStatus(200);
+			}
+		});
+	} else {
+		res.sendStatus(400);
 	}
-	res.end(200);
-	
 });
 
-//This function add the list in the database and the array.
-app.get("/addlist", function(req, res) {
-	console.log("Add list");
+//this function add a to do list to the database.
+app.get('/addlist', function(req, res) {
+	//Future: get user from cookie.
+	console.log(req.user);
+	var list = new ToDoList(newListId, "New list, click to edit!",req.user.id );
+	highestIds();
+	db.query(list.insertData(), function(err, rows, fields) {
+		if(err) {res.sendStatus(500); console.log(err);}
+		else {
+			res.render('ToDoList.ejs', {'list':list});
+			console.log("Added new list: " + list.getId() + ", " + list.getName());
+		}
+	});
 });
 
 //This function updates the list in the database and in the array
 app.get("/updatelist", function(req, res) {
 	console.log("Update list");
+	var url_parts = url.parse(req.url, true);
+	var query = url_parts.query;
+	if(query['data']) {
+		var data = JSON.parse(query['data']);
+		var list = new ToDoList(data.id, data.name);
+
+		db.query(list.updateData(), function(err, rows, fields) {
+			if(err) {res.sendStatus(500); console.log(err);}
+			else {
+				res.sendStatus(200); console.log("  Updated todolist " + list.getId() + ", " + list.getName());
+			}
+		});
+	} else {
+		res.sendStatus(400);
+	}
 });
 
 var deleteQuery = "DELETE FROM ToDoItem WHERE Id = ";
@@ -185,51 +229,27 @@ app.get("/deletetodo", function(req, res) {
 	
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	if(query['id'] !== undefined) {
-		var id = query['id'];
-		console.log("\n User deleted todo " + id + "\n");
-		sentTodos.splice(getArrayLocation(id), 1);
+	if(query['id']) {
+		var id = parseInt(query['id']);
+
 		db.query(deleteQuery + id, function(err, rows, fields) {
-			if(err) {console.log(err);}
+			if(err) {res.sendStatus(500); console.log(err);}
+			else {
+				res.sendStatus(200);
+				console.log("Deleted todo: " + id);
+			}
 		});
-		res.end("Deleted to do!");
+	} else {
+		res.sendStatus(400);
 	}
-	res.end(500);
 });
 
-//Responds with a new id for a to do or to do list.
-app.get("/newid", function(req, res) {
-	var url_parts = url.parse(req.url, true);
-	var query = url_parts.query;
-	
-	if(query['type'] !== undefined) {
-		var type = query['type'];
-		if(type == 'todo') {
-			db.query(highestQueryID, function(err, rows, fields) {
-				if(err) { console.log(err);}
-				else {
-					var id = parseInt(rows[0].id) + 1;
-					var response = id.toString();
-					res.send(response);
-					console.log("\n New ToDoId: " + id + "\n");
-				}
-			});
-		} else if(type == 'list') {
-			db.query("SELECT Id FROM ToDoList ORDER BY Id DESC LIMIT 1", function(err, rows, fields) {
-				if(err) { console.log(err);}
-				else {
-					var id = parseInt(rows[0].Id) + 1;
-					var response = id.toString();
-					res.send(response);
-					console.log("\n New List id: " + id + "\n");
-				}
-			});
-		}
-	}
-	
-	
-	
-});
+app.get('/auth/twitter', passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback',
+	passport.authenticate('twitter', { successRedirect: '/todo.html',
+										failureRedirect: '/'})
+);
 
 //Responds with the number of finished to dos
 app.get("/stats/finished", function(req, res) {
@@ -259,48 +279,3 @@ app.get("/stats/total", function(req, res) {
 
 console.log("Server listening on port " + port);
 http.createServer(app).listen(port);
-
-var getArrayLocation= function(id) {
-	for(var x = 0; x < sentTodos.length; x++) {
-		if(sentTodos[x].ToDoId == id) {
-			return parseInt(x);
-		}
-	}
-	return -1;
-}
-
-var updateToDoDB = function(todo) {
-	var updateQuery = "UPDATE ToDoItem ";
-	updateQuery += "SET Text='" + todo.message + "', ";
-	updateQuery += "DueDate=" + (todo.date != null?'"' + todo.date + '"':null) + ", ";
-	updateQuery += "Completed=" + todo.done + ", ";
-	updateQuery += "CompletionDate=" + (todo.CompletionDate != null?'"' + todo.CompletionDate + '"':null) + ", ";
-	updateQuery += "Priority=" + todo.priority;
-	updateQuery += " WHERE Id=" + todo.id;
-	
-	db.query(updateQuery, function(err, rows, fields) {
-		if(err) {console.log(err); return err;}
-	});
-}
-
-var addToDoToDB = function(todo) {
-	
-	console.log(todo);
-	var insertToDoQuery = "INSERT INTO ToDoItem VALUES(";
-	insertToDoQuery += todo.id + ", ";
-	insertToDoQuery += "null, '";
-	insertToDoQuery += todo.message + "', '";
-	insertToDoQuery += todo.CreationDate + "', ";
-	insertToDoQuery += (todo.date != null?'"' + todo.date + '"':null) + ", ";
-	insertToDoQuery += todo.done + ", ";
-	insertToDoQuery += (todo.CompletionDate != null?'"' + todo.CompletionDate + '"':null) + ", ";
-	insertToDoQuery += todo.priority + ", ";
-	insertToDoQuery += todo.ToDoListId + ", ";
-	insertToDoQuery += "null)";
-	console.log(insertToDoQuery);
-	console.log("\n User added a new todo: " + todo.id + ", " + todo.message + "\n");
-	db.query(insertToDoQuery, function(err, rows, fields){
-		if(err) {console.log(err); return err;}
-	});
-}
-

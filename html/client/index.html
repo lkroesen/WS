@@ -4,36 +4,40 @@
         <title>PLANDO - Your personal To Do list.</title>
         <meta charset="UTF-8">
 		<link rel="stylesheet" type="text/css" href="../css/index.css">
+        <script src="javascripts/jquery.js"></script>
+        <script src="javascripts/jquery.cookie-1.4.1.min.js"></script>
     </head>
     
     <body>
         <header>
-			<img alt='pencil' src='../img/pencil2.png'>
-			<img alt='cloud' src='../img/sync2.png'>
-			<img alt='check' src='../img/checkround2.png'>
+            <div>
+                <img alt='pencil' src='../img/pencil2.png'>
+                <img alt='cloud' src='../img/sync2.png'>
+                <img alt='check' src='../img/checkround2.png'>
+            </div>
         </header>
         
         <main>
-            <table class="second">
-					<tr>
-						<td>
-						<h1 id='mar'></h1>
-                <ul>Lorem ispum dolor sit amet</ul>
-                <ul>Consectetur adipisicing elit sed</ul>
-                <ul>do eiusmod tempor incididunt ut</ul>
-                <ul>lab</ul>
 
-            
-            			<p>
-                		<a id='button' href='../todo.html'></a> </td><br>
-						<td>
-            
-            <figure>
-                <img align="right" class='side' id='side' alt='Smiling people' src='../img/work.jpg'>
-            </figure>
-					</tr>
-				</table>
-            
+            <div class="left">
+                <h1>PLANDO</h1>
+                <ul>
+                    <li>Lorem ispum dolor sit amet</li>
+                    <li>Consectetur adipisicing elit sed</li>
+                    <li>do eiusmod tempor incididunt ut</li>
+                    <li>lab</li>
+                </ul>
+
+
+                <form action="/auth/twitter">
+                    <button id="signTwitter" ></button>
+                </form>
+            </div>
+            <div class="right">
+                <figure>
+                    <img src='../img/work.jpg' />
+                </figure>
+            </div>
         </main>
         
     </body>

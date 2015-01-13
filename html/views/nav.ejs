@@ -1,0 +1,30 @@
+<nav id="menu">
+    <span id="logo">PLANDO</span>
+    <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../html/stats.html">Stats</a></li>
+    </ul>
+
+    <div id="rightNav">
+    <% if(user) { %>
+        <div id="user">
+            <img src="<%= user.avatar %>" />
+            <span id="userName"><%= user.name %></span>
+        </div>
+    <% } %>
+    <a id="preferencesB" href="#">⚙</a>
+    <% if(url == '/todo.html') {%>
+        <a id="newlist" href="#">+</a>
+    <% } %>
+    </div>
+
+</nav>
+
+<section id="preferences">
+    <ul>
+        <li id="backgroundURL">Background url: <input type="text">  ✔</li>
+        <hr />
+        <li id="defaultBackground"><button>Reset background</button></li>
+    </ul>
+
+</section>

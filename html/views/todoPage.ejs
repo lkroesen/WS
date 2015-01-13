@@ -1,0 +1,30 @@
+<html>
+ 	<head>
+		<title>Your To Do's - PLANDO</title>
+		<script src="../javascripts/jquery.js"></script>
+		<script src="../javascripts/jquery.cookie-1.4.1.min.js"></script>
+		<script src="../javascripts/functions.js"></script>
+		<script src="../javascripts/prototypeFunctions.js"></script>
+		<script src="../javascripts/listeners.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/nav.css">
+		<link rel="stylesheet" type="text/css" href="../css/todos.css">
+		<link rel="stylesheet" type="text/css" href="../css/todosPrint.css">
+	</head>
+	
+	<body>
+		
+		<% include nav.ejs %>
+		
+		<section id="content" style="width:<%= 520 * todoLists.length%>">
+			<main id="todolists">
+				<% for(var k = 0; k< todoLists.length; k++) {
+					var list = todoLists[k];
+				%>
+
+				<% include ToDoList %>
+
+				<% } %>
+			</main>
+		</section>
+	</body>
+</html>

@@ -1,0 +1,61 @@
+<div class="listContainer">
+    <section data-listid="<%= list.getId() %>" class="todolist">
+        <h1 contenteditable="true"><%= list.getName() %></h1>
+        <div class="sortButtons">
+            <button data-sort="down" class="dateSort">Time</button>
+            <button data-sort="down" class="prioritySort">!!!</button>
+            <button data-sort="down" class="doneSort">✔</button>
+        </div>
+        <div class="listItemsContainer">
+            <ul>
+                <li class="newToDo todo" id="newToDo">
+                    <form onsubmit="return false;">
+                        <input disabled="disabled" type="checkbox">
+                        <input placeholder="New to do" type="text" class="toDoMessage">
+                        <select class="prioritySelector">
+                            <option value="1">!</option>
+                            <option value="2">!!</option>
+                            <option value="3">!!!</option>
+                        </select>
+                        <button class="addButton">+</button>
+                        <br>
+                        <span class="duedate">
+                            <% var nextWeek = new Date(new Date().getTime() + 7*24*60*60*1000); %>
+                            <select class="day">
+                                <% for(var i = 1; i < 32; i++) { %>
+                                <option value="<%= i %>"<%= (nextWeek.getDate() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                                <% } %>
+                            </select>
+                            <select class="month">
+                                <% for(var i = 1; i < 13; i++) { %>
+                                <option value="<%= i %>"<%= (nextWeek.getMonth() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                                <% } %>
+                            </select>
+                            <select class="year">
+                                <% for(var i = 2015; i < 2021; i++) { %>
+                                <option value="<%= i %>"<%= (nextWeek.getFullYear() == i?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                                <% } %>
+                            </select>
+                            <select class="hours">
+                                <% for(var i = 0; i < 24; i++) { %>
+                                <option value="<%= i %>"<%= (i == 9?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                                <% } %>
+                            </select>
+                            <select class="minutes">
+                                <% for(var i = 0; i < 60; i++) { %>
+                                <option value="<%= i %>"<%= (i == 0?'selected':'')%>><%= (i<10?"0"+i:i) %> </option>
+                                <% } %>
+                            </select>
+                        </span>
+                    </form>
+                </li>
+
+                <% for(var j = 0; j < list.getTodos().length; j++) {
+                    var todo = list.getTodos()[j];
+                %>
+                <% include ToDo.ejs %>
+                <% } %>
+            </ul>
+        </div>
+    </section>
+</div>

@@ -1,27 +1,14 @@
-var getArrayLocation = function(id) {
-	for(var x = 0; x < todoLists.length; x++) {
-		if(todoLists[x].id == id) {
-			return x;
-		}
-	}
-	return -1;
-}
-
 var removeToDo = function (parent) {
 	console.log("Starting to remove");
 	var toDoItem = $(parent).parents('.todo');
-	console.log(toDoItem);
 	var id = $(toDoItem).attr('data-todoid');
-	var listid = $(toDoItem).parents('.todolist').attr('data-listid');
-	console.log("ToDo: " + id + " List: " + listid);
+
 	$(toDoItem).fadeOut(800, function () {
-		$(toDoItem).off('blur');
+		$(toDoItem).off('#todolists', 'ul li.todo[data-todoid="' + id +'"');
 		$(toDoItem).remove();
 	});
 
-	var todo = todoLists.findToDoItem(listid, id);
-	todo.removeFromServer();
-	todoLists.findById(listid).removeToDo(todo);
+	$.get('/deletetodo?id=' + id);
 };
 
 var addToDo = function(target) {
@@ -39,168 +26,149 @@ var addToDo = function(target) {
 	var date = new Date(year, month, day, hours, minutes);
 
 	var priority = $(newTodo).find('.prioritySelector').val();
+
+	$(newTodo).find('.toDoMessage').val("");
+
 	if (message !== "") {
-		$.get("/newid?type=todo", function (response) {
-			var id = parseInt(response);
-			var todo = new Todo(id, message, date, false, priority, toDoListId);
-			var todoHTML = todo.toHTML();
+		var todo = {};
+		todo.message = message;
+		todo.toDoListId = toDoListId;
+		todo.date = date;
+		todo.priority = priority;
 
-			todoLists.findById(todo.ToDoListId).addToDo(todo);
-			$(newTodo).after(todoHTML);
-			$(newTodo).find('.toDoMessage').val("");
-
-			todo.sendToServer(false);
+		var data = JSON.stringify(todo);
+		console.log(data);
+		$.get('/addtodo?data=' + data, function(response) {
+			$(newTodo).after(response);
 		});
 	}
 };
 
 var updateToDo = function(toDoItem) {
 	var todoId = $(toDoItem).attr('data-todoid');
-	var listId = $(toDoItem).parents('.todolist').attr('data-listid');
 
 	var done = $(toDoItem).find('input[type="checkbox"]').is(':checked');
 	var message = $(toDoItem).find('.message').text();
-	var priority = $(toDoItem).find('.priority').val();
+	var priority = $(toDoItem).find('.priority select').val();
 
 	var day = $(toDoItem).find('.day').val();
-	var month = $(toDoItem).find('.month').val();
+	var month = $(toDoItem).find('.month').val() - 1;
 	var year = $(toDoItem).find('.year').val();
 	var hours = $(toDoItem).find('.hours').val();
 	var minutes = $(toDoItem).find('.minutes').val();
 
 	var date = new Date(year, month, day, hours, minutes);
+	$(toDoItem).attr('data-duedate', date);
 
-	var todo = todoLists.findToDoItem(listId, todoId);
+	evaluateToDo(toDoItem, date, done, priority);
+
+	var todo = {};
+	todo.toDoId = todoId;
 	todo.message = message;
+	todo.done = done;
 	todo.priority = priority;
 	todo.date = date;
-	todo.setDone(done);
 
-
-
-	todo.sendToServer(true);
-
+	var data = JSON.stringify(todo);
+	$.get('/updatetodo?data=' + data);
 
 };
 
 
 var addNewList = function() {
-	$.get("/newid?type=list", function(response) {
-			var id = parseInt(response);
-			var newList = new ToDoList(id, "New list, click to edit");
-			todoLists.push(newList);
-		
-			addList(newList);
+	$.get('addlist', function(response) {
+		$('#todolists').append(response);
+		var id = $(response).children('section').attr('data-listid');
+		console.log("List id: " + id);
+		var newList = $('section[data-listid="' + id + '"]').parent();
+
+		$(newList).css("visibility", "hidden");
+
+		var contentWidth = $('#content').width() + $(newList).width() + 40;
+		$('#content').width(contentWidth);
+
+		var offset = $(newList).offset().left;
+		$('body').animate({
+			scrollLeft:offset
+		}, 1400, 'swing', function() {
+			$(newList).css("visibility", "visible");
+			$(newList).css("opacity", 0);
+			$(newList).animate({
+				opacity:1
+			}, 300);
+		});
+
 	});
 };
 
-//This method gets the todos from the database.
-var getTodosFromServer = function(time) {
-	$.getJSON('/todos?time=' + time, function(response) {
-		for(var i = 0; i < response.length; i++) {	
-			if(!todoLists.findById(response[i].ListId)) {
-				todoLists.push(new ToDoList(response[i].ListId, response[i].List));
-			}
-			
-			var todo = new Todo(response[i].ToDoId, response[i].Message, new Date(response[i].DueDate), response[i].Completed, response[i].Priority, response[i].ListId,  new Date(response[i].CreationDate), new Date(response[i].CompletionDate)); 
+var updateList = function(listElement) {
+	var list = {};
+	list.name = $(listElement).find('h1').text();;
+	list.id = $(listElement).attr('data-listid');
 
-			todoLists.findById(todo.ToDoListId).todos.push(todo);
-		}
-		if(time != undefined){
-			for(var i = 0; i < todoLists.length; i++) {
-				addList(todoLists[i]);
-			}
-		}
-	});
+	var data = JSON.stringify(list);
+	$.get("/updatelist?data=" + data);
 };
 
-var contains = function(other) {
-	for(var i = 0; todoLists.length; i++) {
-		if(todoLists[i].id == other.id) {
-			return true;
-		}
-	}
-	return false;
+var isOverDue = function(date) {
+	return date.getTime() < (new Date()).getTime();
 };
 
-var addList = function(list) {
-	var listHTML = list.toHTML().hide();
-	$('#todolists').append(listHTML);
-	listHTML.fadeIn(1200);
-	var selector = '*[data-listid="' + list.id + '"]';
-	var width = $('#content').width() + $(selector).width();
-	$('#content').width(width);
+
+var isVeryDue = function(date) {
+	return ((date.getTime() - (new Date()).getTime()) < (3*60*60*1000)) && !isOverDue(date);
 };
 
-var newDateInput = function() {
-	var dateInput = $("<span></span>").addClass("dateInput");
 
-	var dayInput = $("<select></select>").addClass("day");
-	for(var i = 1; i < 32; i++) {
-		var text = i.toString();
-		if(i < 10) {
-			text = "0" +  i.toString();
+var isDue = function(date) {
+	return date.getTime() - new Date().getTime() < 43200000 && !isOverDue(date) && !isVeryDue(date);
+};
+
+var evaluateToDo = function(todo, date, done, priority) {
+	console.log("Evaluating todo classes");
+	$(todo).attr('class', 'todo');
+	if(!date) {
+		date = new Date($(todo).attr('data-duedate'));
+		done = $(todo).find('input[type="checkbox"]').is(':checked');
+		priority = $(todo).find('.priority select').val();
+	}
+
+	if(isOverDue(date)) {
+		$(todo).addClass('overDue');
+	}
+	if(isVeryDue(date)) {
+		$(todo).addClass('veryDue');
+	}
+	if(isDue(date)) {
+		$(todo).addClass('due');
+	}
+
+	switch(parseInt(priority)) {
+		case 1: $(todo).addClass('priority1'); break;
+		case 2: $(todo).addClass('priority2'); break;
+		case 3: $(todo).addClass('priority3'); break;
+	}
+
+	if(done) {
+		$(todo).addClass('done');
+	}
+};
+
+var setBackground = function(url) {
+	if(url != '') {
+		$('#backgroundURL input').css('background-color', 'rgba(255,0,0,0.7)');
+		if(url.endsWith(".gif") || url.endsWith(".jpg") || url.endsWith(".png") ) {
+			$.cookie('background_cookie', url, {expires:7, path:"/"});
+			$('#backgroundURL input').css('background-color', 'rgba(0,0,0,0.7)');
+			var cssUrl = "url('" + url + "')";
+			$('body').css('background-image', cssUrl);
 		}
-		var option = $("<option></option>", {
-			value:i,
-			text:text
-		});
-		dayInput.append(option);
 	}
-
-	dateInput.append(dayInput);
-
-	var monthInput = $("<select></select>").addClass("month");
-	for(var i = 1; i < 13; i++) {
-		var text = i.toString();
-		if(i < 10) {
-			text = "0" +  i.toString();
-		}
-		var option = $("<option></option>", {
-			value:i,
-			text:text
-		});
-		monthInput.append(option);
+	if(url == 'default') {
+		$('#backgroundURL input').css('background-color', 'rgba(0,0,0,0.7)');
+		$('#backgroundURL input').val("");
+		$.cookie('background_cookie', url, {expires:7, path:"/"});
+		var cssUrl = "url('http://upload.wikimedia.org/wikipedia/commons/a/af/Flickr_-_…trialsanderrors_-_River_valley,_Montenegro,_ca._1895.jpg')";
+		$('body').css('background-image', cssUrl);
 	}
-	dateInput.append(monthInput);
-
-	var yearInput = $("<select></select>").addClass("year");
-	for(var i = (new Date().getFullYear() - 10); i < (new Date().getFullYear() + 10); i++) {
-		var option = $("<option></option>", {
-			value:i,
-			text:i
-		});
-		yearInput.append(option);
-	}
-	dateInput.append(yearInput);
-
-	var hoursInput = $("<select></select>").addClass("hours");
-	for(var i = 0; i < 24; i++) {
-		var text = i.toString();
-		if(i < 10) {
-			text = "0" +  i.toString();
-		}
-		var option = $("<option></option>", {
-			value:i,
-			text:text
-		});
-		hoursInput.append(option);
-	}
-	dateInput.append(hoursInput);
-
-	var minutesInput = $("<select></select>").addClass("minutes");
-	for(var i = 0; i < 60; i++) {
-		var text = i.toString();
-		if(i < 10) {
-			text = "0" +  i.toString();
-		}
-		var option = $("<option></option>", {
-			value:i,
-			text:text
-		});
-		minutesInput.append(option);
-	}
-	dateInput.append(minutesInput);
-	
-	return dateInput;
 };
