@@ -37,7 +37,7 @@ var addToDo = function(target) {
 		todo.priority = priority;
 
 		var data = JSON.stringify(todo);
-		console.log(data);
+		data = encodeURIComponent(data);
 		$.get('/addtodo?data=' + data, function(response) {
 			$(newTodo).after(response);
 		});
@@ -70,6 +70,7 @@ var updateToDo = function(toDoItem) {
 	todo.date = date;
 
 	var data = JSON.stringify(todo);
+	data = encodeURIComponent(data);
 	$.get('/updatetodo?data=' + data);
 
 };
@@ -103,10 +104,11 @@ var addNewList = function() {
 
 var updateList = function(listElement) {
 	var list = {};
-	list.name = $(listElement).find('h1').text();;
+	list.name = $(listElement).find('h1').text();
 	list.id = $(listElement).attr('data-listid');
 
 	var data = JSON.stringify(list);
+	data = encodeURIComponent(data);
 	$.get("/updatelist?data=" + data);
 };
 

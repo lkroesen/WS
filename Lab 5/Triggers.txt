@@ -1,0 +1,56 @@
+UPDATE TODO TRIGGER
+
+DELIMITER //
+CREATE TRIGGER ToDoItemUpdate BEFORE UPDATE ON ToDoItem
+FOR EACH ROW
+BEGIN
+	IF OLD.Completed = 0 AND NEW.Completed = 1 THEN
+		SET NEW.CompletionDate = NOW();
+	ELSEIF OLD.Completed = 1 AND NEW.Completed = 0 THEN
+		SET NEW.CompletionDate = null;
+	ELSEIF OLD.Completed = NEW.Completed THEN
+		SET NEW.CompletionDate = OLD.CompletionDate;
+	END IF;
+	
+	INSERT INTO ToDoItemChange (`ToDoId`, `Text`, `DueDate`, `Completed`, `CompletionDate`, `Priority`, `ToDoListId`, `ChangeDate`) 
+		VALUES(OLD.Id, OLD.Text, OLD.DueDate, OLD.Completed, OLD.CompletionDate, OLD.Priority, OLD.ToDoListId, NOW());
+END
+//
+
+DELIMITER ;
+
+DELETE TODO TRIGGER
+
+DELIMITER //
+CREATE TRIGGER ToDoItem_Delete BEFORE DELETE ON ToDoItem
+FOR EACH ROW
+BEGIN
+	INSERT INTO ToDoItemChange (`ToDoId`, `Text`, `DueDate`, `Completed`, `CompletionDate`, `Priority`, `ToDoListId`, `Deletion`, `ChangeDate`) 
+		VALUES(OLD.Id, OLD.Text, OLD.DueDate, OLD.Completed, OLD.CompletionDate, OLD.Priority, OLD.ToDoListId, 1, NOW());
+END
+//
+
+DELIMITER ;
+	
+UPDATE LIST TRIGGER
+
+
+
+DELIMITER //
+CREATE TRIGGER List_Update BEFORE UPDATE ON ToDoList
+FOR EACH ROW
+BEGIN
+	INSERT INTO ToDoListChange (`ListId`, `Name`, `IsPublic`, `ChangeDate`) VALUES(OLD.Id, OLD.Name, OLD.IsPublic, NOW());
+END //
+DELIMITER ;
+
+DELETE LIST TRIGGER
+
+DELIMITER //
+CREATE TRIGGER List_Delete BEFORE DELETE ON ToDoList
+FOR EACH ROW
+BEGIN
+	INSERT INTO ToDoListChange (`ListId`, `Name`, `Owner`, `IsPublic`, `Deletion`, `ChangeDate`) VALUES(OLD.Id, OLD.Name, OLD.Owner, OLD.IsPublic, 1, NOW());
+END //
+DELIMITER ;
+	

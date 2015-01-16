@@ -191,7 +191,6 @@ app.get("/updatetodo", function(req, res) {
 
 //this function add a to do list to the database.
 app.get('/addlist', function(req, res) {
-	//Future: get user from cookie.
 	console.log(req.user);
 	var list = new ToDoList(newListId, "New list, click to edit!",req.user.id );
 	highestIds();
@@ -247,9 +246,16 @@ app.get("/deletetodo", function(req, res) {
 app.get('/auth/twitter', passport.authenticate('twitter'));
 
 app.get('/auth/twitter/callback',
-	passport.authenticate('twitter', { successRedirect: '/todo.html',
+	passport.authenticate('twitter', { successRedirect: '/authorized.html',
 										failureRedirect: '/'})
 );
+
+app.get('/authorized.html', passport.authenticate('twitter'), function(req, res) {
+	if(req.user) {
+		res.render('authorized.ejs', {'user':req.user});
+	}
+
+});
 
 //Responds with the number of finished to dos
 app.get("/stats/finished", function(req, res) {

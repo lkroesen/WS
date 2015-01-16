@@ -1,0 +1,10 @@
+1. View duurt langer
+
+2. View is 0,00001 seconden sneller
+
+3. View is 2 keer zo langzaam
+
+5. View is iets sneller.
+
+6. View is veel langzamer.
+

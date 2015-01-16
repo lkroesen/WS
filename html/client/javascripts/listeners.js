@@ -77,22 +77,16 @@ $(document).ready(function () {
 			removeToDo(this);
 		}
 	});
-
-	//Als de gebruiker ergens anders klikt verandert de knop weer terug.
-	$('#todolists').on('blur', 'ul li.todo button.delete', function() {
-		console.log("Lost focus on button delete");
-		$(this).text('||');
-	});
 	
 	//This method handles the checkbox behaviour.
-	$('ul').on('change', '.todo:not(#newToDo) input[type=checkbox]', function() {
+	$('#todolists').on('change', '.todo:not(.newToDo) input[type=checkbox]', function() {
 		console.log("checkbox clicked");
 		var todoElement = $(this).parents('.todo');
 		updateToDo(todoElement);
 	});
 		
 	//This methode listens if the enter key is pressed when a to do is edited.
-	$('ul').on('keypress', '.todo span', function(key) {
+	$('#todolists').on('keypress', '.todo .message', function(key) {
 		if(key.which === 13) {
 			console.log("BLUR IT!");
 			$(this).blur();

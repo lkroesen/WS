@@ -1,6 +1,6 @@
 1.
 SELECT Tag.Id, COUNT(*)
-FROM Tag INNER JOIN TagItem ON Tag.Id = ItemTag.TagId INNER JOIN ToDoItem ON ItemTag.ToDoId = ToDoItem.Id
+FROM Tag INNER JOIN ItemTag ON Tag.Id = ItemTag.TagId INNER JOIN ToDoItem ON ItemTag.ToDoId = ToDoItem.Id
 WHERE ToDoItem.Completed = 1
 GROUP BY Tag.Id
 
