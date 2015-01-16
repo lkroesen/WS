@@ -42,7 +42,7 @@ app.set('view engine', 'ejs');
 passport.use(new TwitterStrategy({
 	consumerKey: credentials.twitter.CONSUMER_KEY,
 	consumerSecret: credentials.twitter.CONSUMER_SECRET_KEY,
-	callbackURL: "http://127.0.0.1:4000/todo.html"
+	callbackURL: "http://127.0.0.1:4000/auth/twitter/callback"
 }, function(token, tokenSecret, profile, done) {
 	User.findOrCreate(profile, function(err, user) {
 		if(err) {return done(err);}
@@ -132,7 +132,7 @@ setInterval(function() {
 	highestIds();
 }, 500);
 
-app.get("/todo.html", passport.authenticate('twitter'), function(req, res) {
+app.get("/todo.html", function(req, res) {
 	if(req.user) {
 		var user = req.user;
 		requests++;
@@ -246,16 +246,9 @@ app.get("/deletetodo", function(req, res) {
 app.get('/auth/twitter', passport.authenticate('twitter'));
 
 app.get('/auth/twitter/callback',
-	passport.authenticate('twitter', { successRedirect: '/authorized.html',
+	passport.authenticate('twitter', { successRedirect: '/todo.html',
 										failureRedirect: '/'})
 );
-
-app.get('/authorized.html', passport.authenticate('twitter'), function(req, res) {
-	if(req.user) {
-		res.render('authorized.ejs', {'user':req.user});
-	}
-
-});
 
 //Responds with the number of finished to dos
 app.get("/stats/finished", function(req, res) {
