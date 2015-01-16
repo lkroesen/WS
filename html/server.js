@@ -16,6 +16,7 @@ var session = require('express-session');
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
 var validator = require('validator');
+var favicon = require('serve-favicon');
 
 var app = express();
 
@@ -35,7 +36,7 @@ app.use(cookies(credentials.cookies.secret));
 app.use(session(credentials.cookies.secret));
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(favicon(__dirname + "/client/img/favicon.ico"));
 
 app.set('view engine', 'ejs');
 
